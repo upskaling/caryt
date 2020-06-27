@@ -62,14 +62,14 @@ class Waiting_list
   }
 
   public function download(
-    $id,
+    int $id,
     $output,
     $cookiefile,
     $download_archive
   ) {
     require_once __DIR__ . '/../Models/Youtube_dl.php';
     $youtube_dl = new Youtube_dl();
-    $value = $this->videos[$id];
+    $value = &$this->videos[$id];
 
     $youtube_dl->downloader(
       $value['url'],
@@ -85,14 +85,13 @@ class Waiting_list
     error_log($stdout);
 
     if ($status > 0) {
-      error_log("[dl] erreur de téléchargement");
       if (empty($value['pass'])) {
         $value['pass'] = 0;
       }
       $value['pass'] += 1;
+      throw new Exception('download error');
     } else {
       $this->delete($id);
-      return 'err';
     }
   }
 
@@ -110,26 +109,28 @@ class Waiting_list
         break;
       }
 
-
       if (empty($value['pass'])) {
       } elseif ($value['pass'] >= $errorspass) {
         continue;
       }
 
-      if (!$this->download(
-        $key,
-        $output,
-        $cookiefile,
-        $download_archive
-      )) {
+      try {
+        $this->download(
+          $key,
+          $output,
+          $cookiefile,
+          $download_archive
+        );
         $download += 1;
+      } catch (Exception $e) {
+        error_log($e->getMessage());
       }
     }
 
     $this->write();
   }
 
-  public function delete($id)
+  public function delete(int $id)
   {
     unset($this->videos[$id]);
     $this->videos = array_values($this->videos);
