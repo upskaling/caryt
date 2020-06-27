@@ -1,15 +1,20 @@
 <?php #UTF-8
-foreach (glob($config['YOUTUBR_DL_WL'] . '/*/') as $filename) {
-  if (in_array(basename($filename), array('trash', '.', '..'), true)) {
-    continue;
+include  __DIR__ . '/../Models/InfoVideo.php';
+
+$count_video = 0;
+foreach (scandir($config['YOUTUBR_DL_WL']) as $fileDate) {
+  if (in_array($fileDate, ['.', '..'])) continue;
+  $youtubr_dl_wl_dir[] = $fileDate;
+  foreach (scandir($config['YOUTUBR_DL_WL'] . '/' . $fileDate) as $video_id) {
+    if (in_array($video_id, ['.', '..'])) continue;
+    $count_video += 1;
   }
-  $youtubr_dl_wl_dir[] = basename($filename);
 }
 
 ?>
 
 
-<?php $title = '(' . count($youtubr_dl_wl_dir) . ') Abonnements'; ?>
+<?php $title = '(' . $count_video . ') Abonnements'; ?>
 <?php ob_start(); ?>
 
 <?php include(__DIR__ . '/../template/header.php'); ?>
@@ -17,22 +22,19 @@ foreach (glob($config['YOUTUBR_DL_WL'] . '/*/') as $filename) {
 <div class="container py-4">
   <div>
     <?php
-    foreach ($youtubr_dl_wl_dir as $filename) {
+    foreach ($youtubr_dl_wl_dir as $filename) :
       if (!is_dir($dir_video = $config['YOUTUBR_DL_WL'] . '/' . $filename)) {
-        continue;
-      }
-      if (in_array($filename, array('trash', '.', '..'), true)) {
         continue;
       }
     ?>
       <div class="d-flex justify-content-center bd-highlight mb-2 text-center">
         <div class="card">
           <a class="dropdown-item" href="?c=subscriptions&page=<?= $filename ?>#<?= $filename ?>"><?= $filename ?>
-            <span class="badge badge-dark"><?= sizeof(scandir($dir_video)) - 2 ?></span>
+            <span class="badge badge-dark"><?= count(scandir($dir_video)) - 2 ?></span>
           </a>
         </div>
       </div>
-    <?php } ?>
+    <?php endforeach; ?>
   </div>
 
   <?php
@@ -46,7 +48,7 @@ foreach (glob($config['YOUTUBR_DL_WL'] . '/*/') as $filename) {
       <div class="card">
         <a href="#<?= $filename ?>" class="p-2 bd-highlight dropdown-item">
           <?= $filename ?>
-          <span class="badge badge-dark"><?= sizeof(scandir($dir_video)) - 2 ?></span>
+          <span class="badge badge-dark"><?= count(scandir($dir_video)) - 2 ?></span>
         </a>
       </div>
     </div>
@@ -55,35 +57,34 @@ foreach (glob($config['YOUTUBR_DL_WL'] . '/*/') as $filename) {
 
       <?php
       foreach (scandir($dir_video) as $name) :
-        if (in_array($name, array(".", ".."))) {
-          continue;
-        }
-        $jsonb = json_decode(file_get_contents($dir_video . '/' . $name . '/' . $name . ".info.json"), true);
+        if (in_array($name, array(".", ".."))) continue;
 
-        $jsonb['_filename'] = $dir_video . '/' . $name . '/' . pathinfo($jsonb['_filename'], PATHINFO_BASENAME);
-        if (is_file($jsonb['_filename'])) {
+        $InfoVideo = new InfoVideo($dir_video . '/' . $name . '/' . $name . '.info.json');
+        $info = $InfoVideo->info;
+
+        $info['_filename'] = $dir_video . '/' . $name . '/' . pathinfo($info['_filename'], PATHINFO_BASENAME);
+        if (is_file($info['_filename'])) {
           $hebergeur = '<img src="favicon.png" title="local" width="16" height="16">';
         } else {
           $hebergeur = '<img src="youtube-logo.png" title="YouTube" width="16" height="16">';
         }
-
-        $url_video = '?c=watch&v=' . $filename . '/' . $name;
-
-        if ($jsonb['duration'] >= 3600) {
-          $jsonb['duration'] = strftime("%H:%M:%S", $jsonb['duration']);
+        
+        if ($info['duration'] >= 3600) {
+          $info['duration'] = strftime("%H:%M:%S", $info['duration']);
         } else {
-          $jsonb['duration'] = strftime("%M:%S", $jsonb['duration']);
+          $info['duration'] = strftime("%M:%S", $info['duration']);
         }
-
-        $thumbnail_basename = pathinfo($jsonb['thumbnail'], PATHINFO_EXTENSION);
+        
+        $thumbnail_basename = $InfoVideo->ThumbnailBasename;
         if (is_file($config['YOUTUBR_DL_WL'] . '/' . $filename . '/' .  $name . '/' . $name . '.' . $thumbnail_basename)) {
-          $jsonb['thumbnail'] = 'f.php?' . $filename . '/' . $name . '.' . $thumbnail_basename;
+          $info['thumbnail'] = 'f.php?' . $filename . '/' . $name . '.' . $thumbnail_basename;
         }
-
-        if ($jsonb['thumbnail']) {
-          $poster = '<img src="' . htmlspecialchars($jsonb['thumbnail']) . '" loading="lazy" alt="" width="100%">';
+        
+        if ($info['thumbnail']) {
+          $poster = '<img src="' . htmlspecialchars($info['thumbnail']) . '" loading="lazy" alt="" width="100%">';
         }
-
+        
+        $url_video = '?c=watch&v=' . $filename . '/' . $name;
       ?>
 
         <div class="col mb-4">
@@ -91,22 +92,22 @@ foreach (glob($config['YOUTUBR_DL_WL'] . '/*/') as $filename) {
             <a href="<?= $url_video ?>">
               <div class="thumbnail">
                 <?= $poster ?>
-                <p class="length"><?= htmlspecialchars($jsonb['duration']) ?></p>
+                <p class="length"><?= htmlspecialchars($info['duration']) ?></p>
               </div>
             </a>
             <div class="card-body row row-cols-1">
               <div class="col align-self-center">
-                <p><?= htmlspecialchars($jsonb['title']) ?></p>
+                <p><?= htmlspecialchars($info['title']) ?></p>
               </div>
               <div class="col align-self-end">
-                <a href="<?= htmlspecialchars($jsonb['uploader_url']) ?>" rel="author" class="card-text">
+                <a href="<?= htmlspecialchars($info['uploader_url']) ?>" rel="author" class="card-text">
                   <small class="text-muted">
-                    <?= htmlspecialchars($jsonb['uploader']) ?>
+                    <?= htmlspecialchars($info['uploader']) ?>
                   </small>
                 </a>
                 <div class="d-flex justify-content-between">
                   <div><?= $hebergeur ?></div>
-                  <div><?= htmlspecialchars($jsonb['view_count']) ?> vues</div>
+                  <div><?= htmlspecialchars($info['view_count']) ?> vues</div>
                 </div>
               </div>
             </div>
