@@ -1,7 +1,7 @@
 <?php #UTF-8
 
 require_once  __DIR__ . '/../Models/Waiting_list.php';
-$waiting_list = new Waiting_list($GLOBALS['config']['waiting_list']);
+$waiting_list = new Waiting_list($config['waiting_list']);
 
 $flux = [];
 $jour = [];

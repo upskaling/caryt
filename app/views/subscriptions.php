@@ -1,5 +1,5 @@
 <?php #UTF-8
-foreach (glob($GLOBALS['config']['YOUTUBR_DL_WL'] . '/*/') as $filename) {
+foreach (glob($config['YOUTUBR_DL_WL'] . '/*/') as $filename) {
   if (in_array(basename($filename), array('trash', '.', '..'), true)) {
     continue;
   }
@@ -18,7 +18,7 @@ foreach (glob($GLOBALS['config']['YOUTUBR_DL_WL'] . '/*/') as $filename) {
   <div>
     <?php
     foreach ($youtubr_dl_wl_dir as $filename) {
-      if (!is_dir($dir_video = $GLOBALS['config']['YOUTUBR_DL_WL'] . '/' . $filename)) {
+      if (!is_dir($dir_video = $config['YOUTUBR_DL_WL'] . '/' . $filename)) {
         continue;
       }
       if (in_array($filename, array('trash', '.', '..'), true)) {
@@ -37,7 +37,7 @@ foreach (glob($GLOBALS['config']['YOUTUBR_DL_WL'] . '/*/') as $filename) {
 
   <?php
   $filename = isset($_GET['page']) ? $_GET['page'] : end($youtubr_dl_wl_dir);
-  $dir_video = $GLOBALS['config']['YOUTUBR_DL_WL'] . '/' . $filename;
+  $dir_video = $config['YOUTUBR_DL_WL'] . '/' . $filename;
   ?>
 
   <div id="<?= $filename ?>">
@@ -76,7 +76,7 @@ foreach (glob($GLOBALS['config']['YOUTUBR_DL_WL'] . '/*/') as $filename) {
         }
 
         $thumbnail_basename = pathinfo($jsonb['thumbnail'], PATHINFO_EXTENSION);
-        if (is_file($GLOBALS['config']['YOUTUBR_DL_WL'] . '/' . $filename . '/' .  $name . '/' . $name . '.' . $thumbnail_basename)) {
+        if (is_file($config['YOUTUBR_DL_WL'] . '/' . $filename . '/' .  $name . '/' . $name . '.' . $thumbnail_basename)) {
           $jsonb['thumbnail'] = 'f.php?' . $filename . '/' . $name . '.' . $thumbnail_basename;
         }
 

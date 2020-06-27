@@ -79,6 +79,7 @@ function main()
     } else {
         require '../config.default.php';
     }
+
     error_log(get_lock());
 
     // if (test_connection('www.youtube.com', 443, 60) == 'down') {
@@ -86,25 +87,25 @@ function main()
     //     exit;
     // }
 
-    purge($GLOBALS['config']['YOUTUBR_DL_WL'], $GLOBALS['config']['YOUTUBR_DL_WL_purge_days']);
+    purge($config['YOUTUBR_DL_WL'], $config['YOUTUBR_DL_WL_purge_days']);
 
-    removeDirectory($GLOBALS['config']['YOUTUBR_DL_WL'] . '/trash');
+    removeDirectory($config['YOUTUBR_DL_WL'] . '/trash');
 
     require_once 'Models/Feedparser.php';
-    $feedparser = new Feedparser($GLOBALS['config']['feed']);
-    $feedparser->track_flows($GLOBALS['config']['max_feed']);
+    $feedparser = new Feedparser($config['feed']);
+    $feedparser->track_flows($config['max_feed']);
 
     require_once 'Models/Waiting_list.php';
-    $waiting_list = new Waiting_list($GLOBALS['config']['waiting_list']);
+    $waiting_list = new Waiting_list($config['waiting_list']);
     $waiting_list->download_from_list(
-        $GLOBALS['config']['max_downloads'],
-        $GLOBALS['config']['errorspass'],
-        $GLOBALS['config']['YOUTUBR_DL_WL'] . '/' . date("Y-m-d", time()) . '/%(id)s/%(id)s.%(ext)s',
-        $GLOBALS['config']['cookiefile'],
-        $GLOBALS['config']['download-archive']
+        $config['max_downloads'],
+        $config['errorspass'],
+        $config['YOUTUBR_DL_WL'] . '/' . date("Y-m-d", time()) . '/%(id)s/%(id)s.%(ext)s',
+        $config['cookiefile'],
+        $config['download-archive']
     );
 
-    if (diff_dir($GLOBALS['config']['YOUTUBR_DL_WL'], $GLOBALS['config']['diff'])) {
+    if (diff_dir($config['YOUTUBR_DL_WL'], $config['diff'])) {
         include 'rss.php';
     }
 

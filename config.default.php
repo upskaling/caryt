@@ -1,6 +1,6 @@
 <?php #UTF-8
 
-$GLOBALS['config'] = array(
+$config = array(
     'waiting_list' => '../data/waiting_list.json',
     // number of download attempts
     'errorspass' => 3,

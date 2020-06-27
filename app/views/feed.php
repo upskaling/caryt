@@ -1,7 +1,7 @@
 <?php #UTF-8
 
 require_once __DIR__ . '/../Models/Feedparser.php';
-$feedparser = new Feedparser($GLOBALS['config']['feed']);
+$feedparser = new Feedparser($config['feed']);
 
 $add_url = $_POST['add_url'] ?? '';
 $resulta = null;

@@ -1,7 +1,7 @@
 <?php #UTF-8
 
 require_once __DIR__ . '/../Models/Waiting_list.php';
-$waiting_list = new Waiting_list($GLOBALS['config']['waiting_list']);
+$waiting_list = new Waiting_list($config['waiting_list']);
 
 $delete = $_POST["delete"] ?? '';
 if ($delete) {
@@ -14,20 +14,20 @@ $let_waiting = sizeof($waiting_list->videos);
 $page = $_GET['page'] ?? 0;
 
 if ($page) {
-  $page_start = $GLOBALS['config']['items_per_page'] * $page;
-  $page_max = $page_start + $GLOBALS['config']['items_per_page'];
+  $page_start = $config['items_per_page'] * $page;
+  $page_max = $page_start + $config['items_per_page'];
 } else {
   $page_start = 0;
-  $page_max = $GLOBALS['config']['items_per_page'];
+  $page_max = $config['items_per_page'];
 }
 
 $download = $_POST["download"] ?? '';
 if (!empty($download)) {
   $waiting_list->download(
     $download,
-    $GLOBALS['config']['YOUTUBR_DL_WL'] . '/' . date("Y-m-d", time()) . '/%(id)s/%(id)s.%(ext)s',
-    $GLOBALS['config']['cookiefile'],
-    $GLOBALS['config']['download-archive']
+    $config['YOUTUBR_DL_WL'] . '/' . date("Y-m-d", time()) . '/%(id)s/%(id)s.%(ext)s',
+    $config['cookiefile'],
+    $config['download-archive']
   );
   $waiting_list->write();
 }
@@ -68,9 +68,9 @@ if (!empty($download)) {
           <p class="page-link"><?= $page ?: '1' ?></p>
         </li>
         <li class="page-item">
-          <p class="page-link"><?= ceil($let_waiting / $GLOBALS['config']['items_per_page']) - 1 ?></p>
+          <p class="page-link"><?= ceil($let_waiting / $config['items_per_page']) - 1 ?></p>
         </li>
-        <?php if (!($page_start + $GLOBALS['config']['items_per_page'] > $let_waiting)) : ?>
+        <?php if (!($page_start + $config['items_per_page'] > $let_waiting)) : ?>
           <li class="page-item">
             <a class="page-link" href="?c=waiting&page=<?= $page + 1 ?>">➡️</a>
           </li>

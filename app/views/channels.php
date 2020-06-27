@@ -1,7 +1,7 @@
 <?php #UTF-8
 
 require_once __DIR__ . '/../Models/Feedparser.php';
-$feedparser = new Feedparser($GLOBALS['config']['feed']);
+$feedparser = new Feedparser($config['feed']);
 
 $error = $_GET['error'] ?? '';
 if ($error > 0) {

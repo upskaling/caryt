@@ -1,11 +1,11 @@
 <?php
 
-$jsonb = json_decode(file_get_contents($GLOBALS['config']['YOUTUBR_DL_WL'] . '/' . $_GET["v"] . '/' . basename($_GET["v"]) . '.info.json'), true);
+$jsonb = json_decode(file_get_contents($config['YOUTUBR_DL_WL'] . '/' . $_GET["v"] . '/' . basename($_GET["v"]) . '.info.json'), true);
 
 $thumbnail_basename = pathinfo($jsonb['thumbnail'], PATHINFO_EXTENSION);
 $name = basename($_GET["v"]);
 
-if (is_file($GLOBALS['config']['YOUTUBR_DL_WL'] . '/' . $_GET["v"] . '/' . $name . '.' . $thumbnail_basename)) {
+if (is_file($config['YOUTUBR_DL_WL'] . '/' . $_GET["v"] . '/' . $name . '.' . $thumbnail_basename)) {
     $jsonb['thumbnail'] = 'f.php?' . $_GET["v"] . '.' . $thumbnail_basename;
 }
 

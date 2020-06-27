@@ -21,7 +21,7 @@ if (is_file('../data/config.php')) {
 }
 
 $file = [
-    $GLOBALS['config']['YOUTUBR_DL_WL'],
+    $config['YOUTUBR_DL_WL'],
     $path_parts['dirname'],
     $path_parts['filename'],
     $path_parts['basename']
