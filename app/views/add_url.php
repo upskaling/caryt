@@ -3,8 +3,8 @@
 require_once  __DIR__ . '/../Models/Waiting_list.php';
 $waiting_list = new Waiting_list($config['waiting_list']);
 
-$url = htmlspecialchars($_POST["url"]) ?? '';
-if ($url) {
+(string) $url = filter_var($_POST["url"] ?? '', FILTER_VALIDATE_URL);
+if (!empty($url)) {
     $waiting_list->add_video($url);
     $waiting_list->write();
 }
@@ -14,7 +14,7 @@ if ($url) {
 <?php $title = 'Ajout d\'une URL'; ?>
 <?php ob_start(); ?>
 
-<?php if ($url) : ?>
+<?php if (!empty($url)) : ?>
     <div class="alert alert-success" role="alert">
         <?= $url ?>
     </div>

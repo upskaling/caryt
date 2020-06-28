@@ -2,7 +2,7 @@
 
 class Feedparser
 {
-    public function __construct($feed_file)
+    public function __construct(string $feed_file)
     {
         $this->feed_file = $feed_file;
         $this->read();
@@ -148,7 +148,7 @@ class Feedparser
         $this->write();
     }
 
-    public function add_feeds($xmlUrl, &$resulta, &$i)
+    public function add_feeds(string $xmlUrl, &$resulta, &$i)
     {
         foreach ($this->feeds as $i => $value) {
             if ($value['xmlUrl'] == $xmlUrl) {
@@ -182,7 +182,7 @@ class Feedparser
         }
     }
 
-    public function delete($id)
+    public function delete(string $id)
     {
         unset($this->feeds[$id]);
     }

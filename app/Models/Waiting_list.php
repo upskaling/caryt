@@ -2,7 +2,7 @@
 
 class Waiting_list
 {
-  public function __construct($waiting_list = '../data/waiting_list.json')
+  public function __construct(string $waiting_list = '../data/waiting_list.json')
   {
 
     $this->waiting_list = $waiting_list;

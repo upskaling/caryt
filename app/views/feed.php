@@ -3,28 +3,29 @@
 require_once __DIR__ . '/../Models/Feedparser.php';
 $feedparser = new Feedparser($config['feed']);
 
-$add_url = $_POST['add_url'] ?? '';
+(int) $Get_id = $_GET['id'] ?? '';
+$add_url = filter_var($_POST['add_url'] ?? '', FILTER_VALIDATE_URL);
 $resulta = null;
 if ($add_url) {
   $feedparser->add_feeds(
     htmlspecialchars($add_url),
     $resulta,
-    $_GET['id']
+    $Get_id
   );
   $feedparser->write();
 }
 
-$get_id = htmlspecialchars($_GET['id']);
+$get_id = htmlspecialchars($Get_id);
 $id = $feedparser->feeds[$get_id];
 
-$xmlUrl = $_POST["xmlUrl"] ?? '';
+(string) $xmlUrl = $_POST["xmlUrl"] ?? '';
 if ($xmlUrl) {
-  $feedparser->feeds[$get_id]['xmlUrl'] = $_POST['xmlUrl'];
-  $feedparser->feeds[$get_id]['siteUrl'] = $_POST['siteUrl'];
-  $feedparser->feeds[$get_id]['title'] = $_POST['title'];
-  $feedparser->feeds[$get_id]['update_interval'] = $_POST['update_interval'];
+  $feedparser->feeds[$get_id]['xmlUrl'] = filter_var($_POST['xmlUrl'], FILTER_VALIDATE_URL);
+  $feedparser->feeds[$get_id]['siteUrl'] = filter_var($_POST['siteUrl'], FILTER_VALIDATE_URL);
+  $feedparser->feeds[$get_id]['title'] = (string) $_POST['title'];
+  $feedparser->feeds[$get_id]['update_interval'] = (int) $_POST['update_interval'];
   $feedparser->write();
-  header('Location: ?c=channels#' . $_GET['id']);
+  header('Location: ?c=channels#' . $Get_id);
 }
 
 $delete = $_POST['delete'] ?? '';
@@ -74,19 +75,19 @@ if ($get_a == 'actualize') {
     <form action="" method="post">
       <div class="form-group">
         <label for="xmlUrl">URL du flux</label>
-        <input type="url" class="form-control" name="xmlUrl" id="xmlUrl" value="<?= $id['xmlUrl'] ?>">
+        <input type="url" class="form-control" name="xmlUrl" id="xmlUrl" value="<?= $id['xmlUrl'] ?? null ?>">
       </div>
       <div class="form-group">
         <label for="siteUrl">URL du site</label>
-        <input type="url" class="form-control" name="siteUrl" id="siteUrl" value="<?= $id['siteUrl'] ?>">
+        <input type="url" class="form-control" name="siteUrl" id="siteUrl" value="<?= $id['siteUrl'] ?? null ?>">
       </div>
       <div class="form-group">
         <label for="title">Titre</label>
-        <input class="form-control" name="title" id="title" value="<?= $id['title'] ?>">
+        <input class="form-control" name="title" id="title" value="<?= $id['title'] ?? null ?>">
       </div>
       <div class="form-group">
         <label>Ne pas automatiquement rafraîchir plus souvent que</label>
-        <input name="update_interval" value="<?= $id['update_interval'] ?>">seconde<br>
+        <input name="update_interval" value="<?= $id['update_interval'] ?? null ?>">seconde<br>
       </div>
       <div class="text-center">
         <button type="submit" class="btn btn-primary">Appliquer les changements</button>

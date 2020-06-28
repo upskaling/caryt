@@ -3,15 +3,15 @@
 require_once __DIR__ . '/../Models/Waiting_list.php';
 $waiting_list = new Waiting_list($config['waiting_list']);
 
-$delete = $_POST["delete"] ?? '';
-if ($delete) {
+$delete = $_POST["delete"] ?? null;
+if (!empty($delete)) {
   $waiting_list->delete($delete - 1);
   $waiting_list->write();
 }
 
 $let_waiting = sizeof($waiting_list->videos);
 
-$page = $_GET['page'] ?? 0;
+(int) $page = $_GET['page'] ?? 0;
 
 if ($page) {
   $page_start = $config['items_per_page'] * $page;
@@ -21,8 +21,8 @@ if ($page) {
   $page_max = $config['items_per_page'];
 }
 
-$download = $_POST["download"] ?? '';
-if (!empty($download)) {
+(int) $download = $_POST["download"] ?? null;
+if (!is_null($download)) {
   $waiting_list->download(
     $download,
     $config['YOUTUBR_DL_WL'] . '/' . date("Y-m-d", time()) . '/%(id)s/%(id)s.%(ext)s',
@@ -107,7 +107,7 @@ if (!empty($download)) {
                     </svg>
                   </span>
                 </button>
-                <button class="close" type="submit" name="download" value="<?= $i + 1 ?>">
+                <button class="close" type="submit" name="download" value="<?= $i ?>">
                   <span class="text-muted">
                     <svg class="bi bi-download" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                       <path fill-rule="evenodd" d="M.5 8a.5.5 0 0 1 .5.5V12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8.5a.5.5 0 0 1 1 0V12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8.5A.5.5 0 0 1 .5 8z" />

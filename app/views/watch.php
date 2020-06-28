@@ -2,13 +2,14 @@
 
 include  __DIR__ . '/../Models/InfoVideo.php';
 
-$name = basename($_GET["v"]);
-$InfoVideo = new InfoVideo($config['YOUTUBR_DL_WL'] . '/' . $_GET["v"] . '/' . $name . '.info.json');
+(string) $Get_v = $_GET["v"] ?? '';
+$name = basename($Get_v);
+$InfoVideo = new InfoVideo($config['YOUTUBR_DL_WL'] . '/' . $Get_v . '/' . $name . '.info.json');
 $info = $InfoVideo->info;
 
-$thumbnail_basename = $wl->ThumbnailBasename;
-if (is_file($config['YOUTUBR_DL_WL'] . '/' . $_GET["v"] . '/' . $name . '.' . $thumbnail_basename)) {
-    $info['thumbnail'] = 'f.php?' . $_GET["v"] . '.' . $thumbnail_basename;
+$thumbnail_basename = $InfoVideo->ThumbnailBasename();
+if (is_file($config['YOUTUBR_DL_WL'] . '/' . $Get_v . '/' . $name . '.' . $thumbnail_basename)) {
+    $info['thumbnail'] = 'f.php?' . $Get_v . '.' . $thumbnail_basename;
 }
 
 if ($info['thumbnail']) {
@@ -16,7 +17,7 @@ if ($info['thumbnail']) {
 }
 
 if (is_file($info['_filename'])) {
-    $url_video = 'f.php?' . $_GET["v"] . '.' . pathinfo($info['_filename'], PATHINFO_EXTENSION);
+    $url_video = 'f.php?' . $Get_v . '.' . pathinfo($info['_filename'], PATHINFO_EXTENSION);
     $LSbasename = $info['_filename'];
     $LSmimetypes = mime_content_type($info['_filename']);
     $html_video = '<div class="embed-responsive embed-responsive-16by9">

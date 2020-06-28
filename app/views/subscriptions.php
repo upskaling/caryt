@@ -75,7 +75,7 @@ foreach (scandir($config['YOUTUBR_DL_WL']) as $fileDate) {
           $info['duration'] = strftime("%M:%S", $info['duration']);
         }
         
-        $thumbnail_basename = $InfoVideo->ThumbnailBasename;
+        $thumbnail_basename = $InfoVideo->ThumbnailBasename();
         if (is_file($config['YOUTUBR_DL_WL'] . '/' . $filename . '/' .  $name . '/' . $name . '.' . $thumbnail_basename)) {
           $info['thumbnail'] = 'f.php?' . $filename . '/' . $name . '.' . $thumbnail_basename;
         }

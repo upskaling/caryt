@@ -26,7 +26,7 @@ class Youtube_dl
         file_put_contents('../bin/youtube-dl', $result);
     }
 
-    public function sehll(array $arguments, &$stderr = null, &$stdout = null, &$ret)
+    public function sehll($arguments, &$stderr = null, &$stdout = null, &$ret)
     {
         $arguments[] .= '--ignore-errors';
         $arguments[] .= '--no-continue';
