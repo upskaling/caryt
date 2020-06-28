@@ -18,6 +18,12 @@ class Feedparser
 
     public function write()
     {
+        if (!empty($this->videos)) {
+            require_once 'Waiting_list.php';
+            $waiting_list = new Waiting_list();
+            $waiting_list->add_video_list($this->videos);
+            $waiting_list->write();
+        }
         $this->remove_duplicates();
         file_put_contents(
             $this->feed_file,
@@ -84,7 +90,7 @@ class Feedparser
             $entry['uploader'] = $value['title'];
             $entry['uploader-url'] = $value['xmlUrl'];
             $entry['get_date'] = $item->get_date('U');
-            
+
             $get_id = $item->get_id();
             if (isset($saved_items[$id]['update'])) {
                 $entry['update'] = $saved_items[$get_id]['update'];
@@ -97,7 +103,7 @@ class Feedparser
                 continue;
             }
             $entity_counter += 1;
-            $videos[] = $entry;
+            $this->videos[] = $entry;
         }
 
 
@@ -118,14 +124,6 @@ class Feedparser
         if ($entity_counter > 0) {
             error_log("[feedparser]:  => add $entity_counter", 0);
         }
-
-
-        $videos = !empty($videos) ? $videos : [];
-
-        require_once 'Waiting_list.php';
-        $waiting_list = new Waiting_list();
-        $waiting_list->add_video_list($videos);
-        $waiting_list->write();
     }
 
     public function track_flows(int $max_feed)
