@@ -21,6 +21,10 @@ caryt n’est fourni avec aucune garantie.
 0 */1 * * * php /path/to/caryt/app/actualize.php 2>&1
 ```
 
+### nginx
+
+configuration nginx dans `nginx.conf`
+
 ### utilisateur mot de passe par défaut
 
 AUTH_USER: `admin`

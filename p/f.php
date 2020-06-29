@@ -31,5 +31,7 @@ $file = join('/', $file);
 header('content-Type: ' . mime_content_type($file));
 header('content-length: ' . filesize($file));
 header('cache-control: max-age=2592000');
+header('Content-disposition: inline; filename="' . $path_parts['basename'] . '"');
+header('X-Accel-Redirect: ' . '/v/' . $path_parts['dirname'] . '/' . $path_parts['filename'] . '/' . $path_parts['basename']);
 
 readfile($file);
