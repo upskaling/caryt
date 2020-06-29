@@ -21,6 +21,12 @@ caryt n’est fourni avec aucune garantie.
 0 */1 * * * php /path/to/caryt/app/actualize.php 2>&1
 ```
 
+### utilisateur mot de passe par défaut
+
+AUTH_USER: `admin`
+
+AUTH_PW: `admin`
+
 ## ce projet utilise
 
 - [Youtube-dl](https://github.com/ytdl-org/youtube-dl)
@@ -38,7 +44,6 @@ caryt n’est fourni avec aucune garantie.
 - écrire des tests
 - s'occuper du CSS
 - ajouter un logo
-- ajouter une page de login
 - ajouter de la recherche
 - ajouter une option sans téléchargement
 - ajouter la possibilité de mettre des podcast

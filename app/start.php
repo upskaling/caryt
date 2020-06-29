@@ -10,6 +10,8 @@ if (is_file('../data/config.php')) {
   require '../config.default.php';
 }
 
+require '../app/views/login.php';
+
 $GET_c = $_GET['c'] ?? '';
 switch ($GET_c) {
   case 'subscriptions':
@@ -54,6 +56,11 @@ switch ($GET_c) {
 
   case 'update':
     require '../app/views/update.php';
+    break;
+
+  case 'logout':
+    header('WWW-Authenticate: Basic realm="Login"');
+    header('HTTP/1.0 401 Unauthorized');
     break;
 
   default:

@@ -1,6 +1,11 @@
 <?php #UTF-8
 
 $config = array(
+    'login' =>
+    array(
+        // admin => admin;
+        'admin' => '$argon2i$v=19$m=65536,t=4,p=1$akpNY1Z3aFNGcUVISnNPLg$YTEVa70CUGh+w/N0dNj9yIBmNbWhfdJG8xjn9ScDMdM',
+    ),
     'waiting_list' => '../data/waiting_list.json',
     // number of download attempts
     'errorspass' => 3,

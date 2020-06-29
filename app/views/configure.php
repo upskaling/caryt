@@ -18,6 +18,14 @@ if ($get_a == 'reading') {
     file_put_contents('../data/config.php', '<?php $config = ' . var_export($config, true) . ';');
 }
 
+$get_a = $_GET['a'] ?? '';
+if ($get_a == 'profile') {
+
+    $config['login'][$_SERVER['PHP_AUTH_USER']] = password_hash($_POST['newPasswordPlain'], PASSWORD_ARGON2I);
+
+    file_put_contents('../data/config.php', '<?php $config = ' . var_export($config, true) . ';');
+}
+
 ?>
 <?php $title = 'configure'; ?>
 <?php ob_start(); ?>
@@ -30,7 +38,7 @@ if ($get_a == 'reading') {
 
             <?php if ($get_a == 'reading') : ?>
                 <div class="alert alert-success" role="alert">
-                    enregistrer
+                    modifications enregistrées
                 </div>
             <?php endif; ?>
 
@@ -58,6 +66,27 @@ if ($get_a == 'reading') {
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary">Valider</button>
                     <button type="reset" class="btn btn-secondary">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card mb-4 shadow-sm">
+        <div class="card-body">
+
+            <?php if ($get_a == 'profile') : ?>
+                <div class="alert alert-success" role="alert">
+                    nouveau mot de passe enregistrées
+                </div>
+            <?php endif; ?>
+
+            <form action="./?c=configure&a=profile" method="post">
+                <div class="form-group">
+                    <label>Mot de passe<br><small>(pour connexion par formulaire)</small></label>
+                    <input type="password" id="newPasswordPlain" name="newPasswordPlain" autocomplete="new-password">
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Valider</button>
                 </div>
             </form>
         </div>

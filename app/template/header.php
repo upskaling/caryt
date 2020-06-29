@@ -7,9 +7,12 @@
                 </a>
                 <span class="navbar-brand">caryt</span>
             </div>
-            <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarsExample06" aria-controls="navbarsExample06" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <div class="nav-item">
+                <a class="btn btn-success my-2 my-sm-0" href="./?c=logout">logout</a>
+                <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarsExample06" aria-controls="navbarsExample06" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
 
             <div class="navbar-collapse collapse" id="navbarsExample06">
                 <div class="my-2 my-md-0">
