@@ -28,6 +28,12 @@ if ($get_a == 'reading') {
     <div class="card mb-4 shadow-sm">
         <div class="card-body">
 
+            <?php if ($get_a == 'reading') : ?>
+                <div class="alert alert-success" role="alert">
+                    enregistrer
+                </div>
+            <?php endif; ?>
+
             <form action="./?c=configure&a=reading" method="post">
                 <div class="form-group">
                     <label for="">nombre de tentatives de téléchargement</label>
@@ -43,7 +49,7 @@ if ($get_a == 'reading') {
                 </div>
                 <div class="form-group">
                     <label for="">nombre de jours après lesquels il faut supprimer</label>
-                    <input type="number" id="YOUTUBR_DL_WL_purge_days" name="YOUTUBR_DL_WL_purge_days" value="<?= $config['YOUTUBR_DL_WL_purge_days'] ?>" min="0" max="500" data-leave-validation="6">
+                    <input type="number" id="YOUTUBR_DL_WL_purge_days" name="YOUTUBR_DL_WL_purge_days" value="<?= $config['YOUTUBR_DL_WL_purge_days'] ?>" min="0" data-leave-validation="6">
                 </div>
                 <div class="form-group">
                     <label for="">URL de l'instance (important pour le flux RSS)</label>
