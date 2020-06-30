@@ -13,7 +13,7 @@ if (is_file($config['YOUTUBR_DL_WL'] . '/' . $Get_v . '/' . $name . '.' . $thumb
 }
 
 if ($info['thumbnail']) {
-    $poster = '<img src="' . htmlspecialchars($info['thumbnail']) . '" loading="lazy" alt="" width="100%">';
+    $poster = '<img src="' . htmlspecialchars($info['thumbnail']) . '" loading="lazy" width="100%">';
 }
 
 if (is_file($info['_filename'])) {
@@ -21,7 +21,7 @@ if (is_file($info['_filename'])) {
     $LSbasename = $info['_filename'];
     $LSmimetypes = mime_content_type($info['_filename']);
     $html_video = '<div class="embed-responsive embed-responsive-16by9">
-    <video class="embed-responsive-item" width="100%" preload="none" controls poster="' . $info['thumbnail'] . '">
+    <video class="embed-responsive-item" preload="none" controls poster="' . $info['thumbnail'] . '">
         <source src="' . $url_video . '" type="' . $LSmimetypes . '"/>
         Votre navigateur ne permet pas de lire les vidéos HTML5.
     </video>

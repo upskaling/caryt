@@ -29,7 +29,7 @@ foreach (scandir($config['YOUTUBR_DL_WL']) as $fileDate) {
     ?>
       <div class="d-flex justify-content-center bd-highlight mb-2 text-center">
         <div class="card">
-          <a class="dropdown-item" href="?c=subscriptions&page=<?= $filename ?>#<?= $filename ?>"><?= $filename ?>
+          <a class="dropdown-item" href="?c=subscriptions&page=<?= $filename ?>#date-<?= $filename ?>"><?= $filename ?>
             <span class="badge badge-dark"><?= count(scandir($dir_video)) - 2 ?></span>
           </a>
         </div>
@@ -42,7 +42,7 @@ foreach (scandir($config['YOUTUBR_DL_WL']) as $fileDate) {
   $dir_video = $config['YOUTUBR_DL_WL'] . '/' . $filename;
   ?>
 
-  <div id="<?= $filename ?>">
+  <div id="date-<?= $filename ?>">
 
     <div class="d-flex justify-content-center bd-highlight mb-2 text-center">
       <div class="card">
@@ -64,9 +64,9 @@ foreach (scandir($config['YOUTUBR_DL_WL']) as $fileDate) {
 
         $info['_filename'] = $dir_video . '/' . $name . '/' . pathinfo($info['_filename'], PATHINFO_BASENAME);
         if (is_file($info['_filename'])) {
-          $hebergeur = '<img src="favicon.png" title="local" width="16" height="16">';
+          $hebergeur = '<img src="favicon.png" alt="local" width="16" height="16">';
         } else {
-          $hebergeur = '<img src="youtube-logo.png" title="YouTube" width="16" height="16">';
+          $hebergeur = '<img src="youtube-logo.png" alt="YouTube" width="16" height="16">';
         }
         
         if ($info['duration'] >= 3600) {
@@ -81,7 +81,7 @@ foreach (scandir($config['YOUTUBR_DL_WL']) as $fileDate) {
         }
         
         if ($info['thumbnail']) {
-          $poster = '<img src="' . htmlspecialchars($info['thumbnail']) . '" loading="lazy" alt="" width="100%">';
+          $poster = '<img src="' . htmlspecialchars($info['thumbnail']) . '" loading="lazy" alt="miniature" width="100%">';
         }
         
         $url_video = '?c=watch&v=' . $filename . '/' . $name;

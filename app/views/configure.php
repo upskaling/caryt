@@ -44,23 +44,23 @@ if ($get_a == 'profile') {
 
             <form action="./?c=configure&a=reading" method="post">
                 <div class="form-group">
-                    <label for="">nombre de tentatives de téléchargement</label>
+                    <label for="errorspass">nombre de tentatives de téléchargement</label>
                     <input type="number" id="errorspass" name="errorspass" value="<?= $config['errorspass'] ?>" min="0" max="50" data-leave-validation="3">
                 </div>
                 <div class="form-group">
-                    <label for="">nombre d'articles par page</label>
+                    <label for="items_per_page">nombre d'articles par page</label>
                     <input type="number" id="items_per_page" name="items_per_page" value="<?= $config['items_per_page'] ?>" min="5" max="500" data-leave-validation="20">
                 </div>
                 <div class="form-group">
-                    <label for="">nombre max de téléchargement</label>
+                    <label for="max_downloads">nombre max de téléchargement</label>
                     <input type="number" id="max_downloads" name="max_downloads" value="<?= $config['max_downloads'] ?>" min="0" max="500" data-leave-validation="5">
                 </div>
                 <div class="form-group">
-                    <label for="">nombre de jours après lesquels il faut supprimer</label>
+                    <label for="YOUTUBR_DL_WL_purge_days">nombre de jours après lesquels il faut supprimer</label>
                     <input type="number" id="YOUTUBR_DL_WL_purge_days" name="YOUTUBR_DL_WL_purge_days" value="<?= $config['YOUTUBR_DL_WL_purge_days'] ?>" min="0" data-leave-validation="6">
                 </div>
                 <div class="form-group">
-                    <label for="">URL de l'instance (important pour le flux RSS)</label>
+                    <label for="url">URL de l'instance (important pour le flux RSS)</label>
                     <input type="url" id="url" name="url" value="<?= $config['url'] ?>">
                 </div>
                 <div class="text-center">
@@ -82,7 +82,7 @@ if ($get_a == 'profile') {
 
             <form action="./?c=configure&a=profile" method="post">
                 <div class="form-group">
-                    <label>Mot de passe<br><small>(pour connexion par formulaire)</small></label>
+                    <label for="newPasswordPlain">Mot de passe<br><small>(pour connexion par formulaire)</small></label>
                     <input type="password" id="newPasswordPlain" name="newPasswordPlain" autocomplete="new-password">
                 </div>
                 <div class="text-center">

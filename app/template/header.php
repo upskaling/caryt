@@ -3,7 +3,7 @@
         <div class="container">
             <div>
                 <a class="navbar-brand" href="index.xml">
-                    <img src="favicon.png" alt="" loading="lazy" width="30" height="30">
+                    <img src="favicon.png" alt="logo" loading="lazy" width="30" height="30">
                 </a>
                 <span class="navbar-brand">caryt</span>
             </div>

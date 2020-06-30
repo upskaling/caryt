@@ -38,26 +38,22 @@ $count_jour = count($jour);
     <div class="card card-body">
 
         <h2>info</h2>
+        <p>dans la file d'attente</p>
+        <?= $count_waiting_list ?> vidéo</br>
+        <?= $count_jour ?> jour</br>
+        <?= $count_waiting_list / $count_jour ?> par jour</br>
 
-        <table class="table table-striped">
-            <tr>
-                <td><?= $count_waiting_list ?> vidéo</td>
-            </tr>
-            <tr>
-                <td><?= $count_jour ?> jour</td>
-            </tr>
-            <tr>
-                <td><?= $count_waiting_list / $count_jour ?> par jour</td>
-            </tr>
-        </table>
     </div>
     <div class="card card-body">
         <h2>Les dix plus gros flux</h2>
         <table class="table table-striped">
+            <caption>
+                Les dix plus gros flux
+            </caption>
             <thead>
                 <tr>
-                    <td scope="col">uploader</td>
-                    <td scope="col">Nombre d’articles</td>
+                    <td>uploader</td>
+                    <td>Nombre d’articles</td>
                 </tr>
             </thead>
             <tbody>
@@ -83,10 +79,11 @@ $count_jour = count($jour);
     <div class="card card-body">
         <h2>Nombre d’articles par jour</h2>
         <table class="table table-striped">
+            <caption>Nombre d’articles par jour</caption>
             <thead>
                 <tr>
-                    <td scope="col">jour</td>
-                    <td scope="col"> articles</td>
+                    <td>jour</td>
+                    <td>articles</td>
                 </tr>
             </thead>
             <tbody>

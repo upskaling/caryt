@@ -30,7 +30,7 @@ if ($xmlUrl) {
     $feedparser->feeds[$get_id]['mute'] = 1;
   }
   $feedparser->write();
-  header('Location: ?c=channels#' . $Get_id);
+  header('Location: ?c=channels#i' . $Get_id);
 }
 
 $delete = $_POST['delete'] ?? '';
@@ -77,7 +77,7 @@ if ($get_a == 'actualize') {
       </div>
     <?php endif; ?>
 
-    <form action="" method="post">
+    <form action="#" method="post">
       <div class="form-group">
         <label for="xmlUrl">URL du flux</label>
         <input type="url" class="form-control" name="xmlUrl" id="xmlUrl" value="<?= $id['xmlUrl'] ?? null ?>">
@@ -88,11 +88,11 @@ if ($get_a == 'actualize') {
       </div>
       <div class="form-group">
         <label for="title">Titre</label>
-        <input class="form-control" name="title" id="title" value="<?= $id['title'] ?? null ?>">
+        <input class="form-control" type="text" name="title" id="title" value="<?= $id['title'] ?? null ?>">
       </div>
       <div class="form-group">
-        <label>Ne pas automatiquement rafraîchir plus souvent que</label>
-        <input name="update_interval" value="<?= $id['update_interval'] ?? null ?>">seconde<br>
+        <label for="ttl">Ne pas automatiquement rafraîchir plus souvent que</label>
+        <input name="update_interval" type="number" id="ttl" value="<?= $id['update_interval'] ?? null ?>">seconde<br>
         <label for="mute">
           <input type="checkbox" name="mute" id="mute" value="1" <?= (empty($id['mute'])) ?: 'checked' ?>>
           muet
@@ -104,7 +104,7 @@ if ($get_a == 'actualize') {
       </div>
       <div class="text-center">
         <a class="btn btn-primary" href="./?c=feed&a=actualize&id=<?= $get_id ?>">
-          <svg class="bi bi-arrow-repeat" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <svg aria-hidden="true" class="bi bi-arrow-repeat" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" d="M2.854 7.146a.5.5 0 0 0-.708 0l-2 2a.5.5 0 1 0 .708.708L2.5 8.207l1.646 1.647a.5.5 0 0 0 .708-.708l-2-2zm13-1a.5.5 0 0 0-.708 0L13.5 7.793l-1.646-1.647a.5.5 0 0 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0 0-.708z" />
             <path fill-rule="evenodd" d="M8 3a4.995 4.995 0 0 0-4.192 2.273.5.5 0 0 1-.837-.546A6 6 0 0 1 14 8a.5.5 0 0 1-1.001 0 5 5 0 0 0-5-5zM2.5 7.5A.5.5 0 0 1 3 8a5 5 0 0 0 9.192 2.727.5.5 0 1 1 .837.546A6 6 0 0 1 2 8a.5.5 0 0 1 .501-.5z" />
           </svg>
