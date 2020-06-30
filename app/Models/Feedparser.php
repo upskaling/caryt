@@ -134,7 +134,8 @@ class Feedparser
         foreach ($this->feeds as $id => $value) {
             if (
                 strtotime($value['update']) >
-                strtotime('-' . $value['update_interval'] . ' seconds')
+                strtotime('-' . $value['update_interval'] . ' seconds') ||
+                !empty($value['mute'])
             ) {
                 continue;
             }

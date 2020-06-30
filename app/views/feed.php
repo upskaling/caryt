@@ -24,6 +24,11 @@ if ($xmlUrl) {
   $feedparser->feeds[$get_id]['siteUrl'] = filter_var($_POST['siteUrl'], FILTER_VALIDATE_URL);
   $feedparser->feeds[$get_id]['title'] = (string) $_POST['title'];
   $feedparser->feeds[$get_id]['update_interval'] = (int) $_POST['update_interval'];
+  if (empty($_POST['mute'])) {
+    unset($feedparser->feeds[$get_id]['mute']);
+  } else {
+    $feedparser->feeds[$get_id]['mute'] = 1;
+  }
   $feedparser->write();
   header('Location: ?c=channels#' . $Get_id);
 }
@@ -88,6 +93,10 @@ if ($get_a == 'actualize') {
       <div class="form-group">
         <label>Ne pas automatiquement rafraîchir plus souvent que</label>
         <input name="update_interval" value="<?= $id['update_interval'] ?? null ?>">seconde<br>
+        <label for="mute">
+          <input type="checkbox" name="mute" id="mute" value="1" <?= (empty($id['mute'])) ?: 'checked' ?>>
+          muet
+        </label>
       </div>
       <div class="text-center">
         <button type="submit" class="btn btn-primary">Appliquer les changements</button>
