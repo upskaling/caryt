@@ -176,7 +176,7 @@ class Feedparser
                     'title' => $feed->get_title(),
                     'siteUrl' => $feed->get_permalink(),
                     'update_interval' => 43200,
-                    'update' => date('Y-m-j H:i:s')
+                    'update' => date('Y-m-d H:i:s')
                 ];
                 $resulta = 0;
             }
