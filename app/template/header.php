@@ -2,8 +2,8 @@
     <nav class="navbar navbar-expand-xl navbar-dark">
         <div class="container">
             <div>
-                <a class="navbar-brand" href="index.xml">
-                    <img src="favicon.png" alt="logo" loading="lazy" width="30" height="30">
+                <a href="./">
+                    <img src="logo_caryt.png" alt="logo caryt" width="30" height="30">
                 </a>
                 <span class="navbar-brand">caryt</span>
             </div>
@@ -17,23 +17,30 @@
             <div class="navbar-collapse collapse" id="navbarsExample06">
                 <div class="my-2 my-md-0">
                     <ul class="navbar-nav mr-auto">
-                        <li>
-                            <a class="p-2 text-light" href="./?c=channels">channels</a>
+                        <li class="navbar-nav p-2">
+                            <a href="index.xml">
+                                <svg class="rss_logo" width="16" height="16" alt="logo rss" viewBox="0 0 16 16" class="bi bi-rss-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm1.5 2.5a1 1 0 0 0 0 2 8 8 0 0 1 8 8 1 1 0 1 0 2 0c0-5.523-4.477-10-10-10zm0 4a1 1 0 0 0 0 2 4 4 0 0 1 4 4 1 1 0 1 0 2 0 6 6 0 0 0-6-6zm.5 7a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z" />
+                                </svg>
+                            </a>
                         </li>
-                        <li>
-                            <a class="p-2 text-light" href="./?c=subscriptions">subscriptions</a>
+                        <li class="navbar-nav p-2">
+                            <a class="text-light" href="./?c=channels">channels</a>
                         </li>
-                        <li>
-                            <a class="p-2 text-light" href="./?c=waiting">liste d'attente</a>
+                        <li class="navbar-nav p-2">
+                            <a class="text-light" href="./?c=subscriptions">subscriptions</a>
                         </li>
-                        <li>
-                            <a class="p-2 text-light" href="./?c=stats">statistiques</a>
+                        <li class="navbar-nav p-2">
+                            <a class="text-light" href="./?c=waiting">liste d'attente</a>
                         </li>
-                        <li>
-                            <a class="p-2 text-light" href="./?c=update">update</a>
+                        <li class="navbar-nav p-2">
+                            <a class="text-light" href="./?c=stats">statistiques</a>
                         </li>
-                        <li>
-                            <a class="p-2 text-light" href="./?c=configure">configure</a>
+                        <li class="navbar-nav p-2">
+                            <a class="text-light" href="./?c=update">update</a>
+                        </li>
+                        <li class="navbar-nav p-2">
+                            <a class="text-light" href="./?c=configure">configure</a>
                         </li>
                 </div>
                 </ul>

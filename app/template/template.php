@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="robots" content="noindex, nofollow" />
     <title><?= $title ?></title>
-    <link rel="shortcut icon" href="favicon.png" />
+    <link rel="shortcut icon" href="logo_caryt.png" />
     <link rel="stylesheet" href="css/bootstrap.css">
     <link rel="stylesheet" href="css/style.css" />
     <link rel="alternate" type="application/rss+xml" title="watchlater" href="index.xml">

@@ -1,5 +1,7 @@
 # un lecteur de flux pour les vidéos
 
+![log caryt](p/logo_caryt.png)
+
 ## Avertissements
 
 caryt n’est fourni avec aucune garantie.
@@ -47,7 +49,6 @@ AUTH_PW: `admin`
 
 - écrire des tests
 - s'occuper du CSS
-- ajouter un logo
 - ajouter de la recherche
 - ajouter une option sans téléchargement
 - ajouter la possibilité de mettre des podcast
