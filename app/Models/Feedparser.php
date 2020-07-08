@@ -88,7 +88,7 @@ class Feedparser
             $entry['title'] = (string) $item->get_title();
 
             $entry['uploader'] = $value['title'];
-            $entry['uploader-url'] = $value['xmlUrl'];
+            $entry['uploader-url'] = $value['siteUrl'] ?? $value['xmlUrl'];
             $entry['get_date'] = $item->get_date('U');
 
             $get_id = $item->get_id();
