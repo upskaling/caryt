@@ -67,7 +67,7 @@ foreach (scandir($dir_video) as $name) {
   $description = $html_video . '<br>';
   $description .= '<a title="' . htmlspecialchars($jsonb['title']) . '" href="' . htmlspecialchars($jsonb['webpage_url']) . '">';
   $description .= htmlspecialchars($jsonb['title']) . '</a><br>';
-  $description .= '<p>' . htmlspecialchars($jsonb['view_count']) . ' vues · ' . date('j M Y', strtotime($jsonb['upload_date'])) . '</p><hr>';
+  $description .= '<p>' . htmlspecialchars($jsonb['view_count']) . ' vues • ' . date('j M Y', strtotime($jsonb['upload_date'])) . '</p><hr>';
   $description .= '<a href="' . htmlspecialchars($jsonb['uploader_url']) . '" rel="author">' . htmlspecialchars($jsonb['uploader']) . '</a>';
   $description .= '<p>' . nl2br(htmlspecialchars($jsonb['description']), false) . '</p>';
 
