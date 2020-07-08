@@ -61,8 +61,16 @@ class Youtube_dl
     }
 
     // https://stackoverflow.com/questions/15153183/youtube-dl-and-php-exec
-    public function downloader(string $url, &$stderr = null, &$stdout = null, &$ret, $output, $cookiefile, $download_archive)
-    {
+    public function downloader(
+        string $url,
+        &$stderr = null,
+        &$stdout = null,
+        &$ret,
+        $output,
+        $cookiefile,
+        $download_archive,
+        bool $mark_watched = true
+    ) {
         $arguments = [
             '--add-metadata',
             '--format "worstvideo[height>=?480][ext=webm]+bestaudio[ext=webm]/worst[height>=?480]/best"',
@@ -71,6 +79,10 @@ class Youtube_dl
             '--write-info-json',
             '--write-thumbnail'
         ];
+
+        if ($mark_watched) {
+            $arguments[] .= '--mark-watched';
+        }
 
         if (!empty($cookiefile)) {
             $arguments[] .= '--cookies "' . $cookiefile . '"';
