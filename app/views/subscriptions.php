@@ -20,14 +20,14 @@ foreach (scandir($config['YOUTUBR_DL_WL']) as $fileDate) {
 <?php include(__DIR__ . '/../template/header.php'); ?>
 
 <div class="container py-4">
-  <div>
+  <div class="row justify-content-center">
     <?php
     foreach ($youtubr_dl_wl_dir as $filename) :
       if (!is_dir($dir_video = $config['YOUTUBR_DL_WL'] . '/' . $filename)) {
         continue;
       }
     ?>
-      <div class="d-flex justify-content-center bd-highlight mb-2 text-center">
+      <div class="mb-2 text-center">
         <div class="card">
           <a class="dropdown-item" href="?c=subscriptions&page=<?= $filename ?>#date-<?= $filename ?>"><?= $filename ?>
             <span class="badge badge-dark"><?= count(scandir($dir_video)) - 2 ?></span>
