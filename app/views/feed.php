@@ -54,6 +54,8 @@ if ($get_a == 'actualize') {
 <div class="container py-4">
   <div class="card card-body">
 
+    <h1><?= $id['title'] ?? null ?></h1>
+
     <?php if ($resulta === 0) : ?>
       <div class="alert alert-success" role="alert">
         <?= htmlspecialchars($_POST["add_url"]) ?>
@@ -78,30 +80,66 @@ if ($get_a == 'actualize') {
     <?php endif; ?>
 
     <form action="#" method="post">
-      <div class="form-group">
-        <label for="xmlUrl">URL du flux</label>
-        <input type="url" class="form-control" name="xmlUrl" id="xmlUrl" value="<?= $id['xmlUrl'] ?? null ?>">
+
+      <div class="form-group row">
+        <label class="col-md-auto col-form-label" for="title">Titre</label>
+        <div class="col-md">
+          <input class="form-control" type="text" name="title" id="title" value="<?= $id['title'] ?? null ?>">
+        </div>
       </div>
-      <div class="form-group">
-        <label for="siteUrl">URL du site</label>
-        <input type="url" class="form-control" name="siteUrl" id="siteUrl" value="<?= $id['siteUrl'] ?? null ?>">
+
+      <hr>
+
+      <div class="form-group row">
+        <label class="col-md-auto col-form-label" for="xmlUrl">URL du flux</label>
+        <div class="col-md">
+          <input type="url" class="form-control" name="xmlUrl" id="xmlUrl" value="<?= $id['xmlUrl'] ?? null ?>">
+        </div>
+        <a class="col-auto btn btn-primary" target="_blank" rel="noreferrer" href="<?= $id['xmlUrl'] ?? null ?>">
+          <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-up-right-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+            <path fill-rule="evenodd" d="M10.5 5h-4a.5.5 0 0 0 0 1h2.793l-4.147 4.146a.5.5 0 0 0 .708.708L10 6.707V9.5a.5.5 0 0 0 1 0v-4a.5.5 0 0 0-.5-.5z" />
+          </svg>
+        </a>
       </div>
-      <div class="form-group">
-        <label for="title">Titre</label>
-        <input class="form-control" type="text" name="title" id="title" value="<?= $id['title'] ?? null ?>">
+
+      <hr>
+
+      <div class="form-group row">
+        <label class="col-md-auto col-form-label" for="siteUrl">URL du site</label>
+        <div class="col-md">
+          <input type="url" class="form-control" name="siteUrl" id="siteUrl" value="<?= $id['siteUrl'] ?? null ?>">
+        </div>
+        <a class="col-auto btn btn-primary" target="_blank" rel="noreferrer" href="<?= $id['siteUrl'] ?? null ?>">
+          <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrow-up-right-square" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M14 1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2z" />
+            <path fill-rule="evenodd" d="M10.5 5h-4a.5.5 0 0 0 0 1h2.793l-4.147 4.146a.5.5 0 0 0 .708.708L10 6.707V9.5a.5.5 0 0 0 1 0v-4a.5.5 0 0 0-.5-.5z" />
+          </svg>
+        </a>
       </div>
-      <div class="form-group">
-        <label for="ttl">Ne pas automatiquement rafraîchir plus souvent que</label>
-        <input name="update_interval" type="number" id="ttl" value="<?= $id['update_interval'] ?? null ?>">seconde<br>
-        <label for="mute">
-          <input type="checkbox" name="mute" id="mute" value="1" <?= (empty($id['mute'])) ?: 'checked' ?>>
-          muet
-        </label>
+
+      <hr>
+
+      <div class="form-group row">
+        <label class="col-md-auto col-form-label" for="ttl">Ne pas automatiquement rafraîchir plus souvent que</label>
+        <div class="col-md">
+          <input name="update_interval" type="number" id="ttl" value="<?= $id['update_interval'] ?? null ?>">seconde<br>
+          <label for="mute">
+            <input type="checkbox" name="mute" id="mute" value="1" <?= (empty($id['mute'])) ?: 'checked' ?>>
+            muet
+          </label>
+        </div>
       </div>
+
+      <hr>
+
       <div class="text-center">
         <button type="submit" class="btn btn-primary">Appliquer les changements</button>
         <button type="submit" class="btn btn-danger" value="TRUE" name="delete">Supprimer</button>
       </div>
+
+      <hr>
+
       <div class="text-center">
         <a class="btn btn-primary" href="./?c=feed&a=actualize&id=<?= $get_id ?>">
           <svg aria-hidden="true" class="bi bi-arrow-repeat" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
@@ -111,6 +149,7 @@ if ($get_a == 'actualize') {
           Actualiser
         </a>
       </div>
+
     </form>
   </div>
 </div>
