@@ -38,7 +38,7 @@ if (is_file($info['_filename'])) {
 <div class="card container-xl">
     <div class="card-body">
         <?= $html_video ?>
-        <a title="<?= htmlspecialchars($info['title']) ?>" href="<?= htmlspecialchars($info['webpage_url']) ?>"><?= htmlspecialchars($info['title']) ?></a>
+        <a target="_blank" rel="noreferrer" title="<?= htmlspecialchars($info['title']) ?>" href="<?= htmlspecialchars($info['webpage_url']) ?>"><?= htmlspecialchars($info['title']) ?></a>
         <div class="d-flex justify-content-between">
 
             <div class="d-inline-flex">
@@ -72,7 +72,7 @@ if (is_file($info['_filename'])) {
         </div>
 
         <hr>
-        <a href="<?= htmlspecialchars($info['uploader_url']) ?>" rel="author"><?= htmlspecialchars($info['uploader']) ?></a>
+        <a target="_blank" rel="noreferrer" href="<?= htmlspecialchars($info['uploader_url']) ?>" rel="author"><?= htmlspecialchars($info['uploader']) ?></a>
         <p><?= nl2br(htmlspecialchars($info['description']), false) ?></p>
 
         <?php if (!empty($info['categories'])) : ?>

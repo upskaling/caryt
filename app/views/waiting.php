@@ -97,7 +97,7 @@ if (!is_null($download)) {
               <?php endif; ?>
 
 
-              <a class="card-link" href="<?= ($waiting_list->videos[$i]['url'] ?? '000') ?> ">
+              <a class="card-link" target="_blank" rel="noreferrer" href="<?= ($waiting_list->videos[$i]['url'] ?? '000') ?> ">
                 <?= ($waiting_list->videos[$i]["title"] ?? '000') ?></a>
               <form action="?c=waiting&page=<?= $page ?>" method="post">
                 <button class="close" type="submit" name="delete" value="<?= $i + 1 ?>">
@@ -119,7 +119,7 @@ if (!is_null($download)) {
               </form>
             </div>
 
-            <a href="<?= ($waiting_list->videos[$i]["uploader-url"] ?? '000') ?>">
+            <a target="_blank" rel="noreferrer" href="<?= ($waiting_list->videos[$i]["uploader-url"] ?? '000') ?>">
               <small class="text-muted"><?= ($waiting_list->videos[$i]["uploader"] ?? '000') ?> </small>
             </a>
 

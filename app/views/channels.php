@@ -72,7 +72,7 @@ $let_feeds = sizeof($feedparser->feeds);
               </svg>
             <?php endif; ?>
 
-            <a class="card-link" href="<?= isset($value['siteUrl']) ? $value['siteUrl'] : $value['xmlUrl']  ?>">
+            <a class="card-link" target="_blank" rel="noreferrer" href="<?= isset($value['siteUrl']) ? $value['siteUrl'] : $value['xmlUrl']  ?>">
               <?= $value['title'] ?>
             </a>
 
