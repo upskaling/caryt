@@ -72,7 +72,7 @@ foreach (scandir($dir_video) as $name) {
   $description .= '<p>' . nl2br(htmlspecialchars($jsonb['description']), false) . '</p>';
 
   $item->appendChild($dom->createElement('title', htmlspecialchars($jsonb['title'])));
-  $item->appendChild($dom->createElement('link', $url_video));
+  $item->appendChild($dom->createElement('link', htmlspecialchars($config['url'] . '?c=watch&v=' . $dir_date . '/' . pathinfo($jsonb['_filename'], PATHINFO_FILENAME))));
   $item->appendChild($dom->createElement('description', $description));
 
   $item->appendChild($dom->createElement('author', htmlspecialchars($jsonb['uploader'])));
