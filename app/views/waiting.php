@@ -79,57 +79,75 @@ if (!is_null($download)) {
     </nav>
 
     <!-- link list -->
-    <?php for ($i = $page_start; $i < $page_max; $i++) {
+    <?php for ($i = $page_start; $i < $page_max; $i++) :
       if (empty($waiting_list->videos[$i])) {
         continue;
       } ?>
       <div class="card mb-4 shadow-sm">
-        <?php if (!empty($waiting_list->videos[$i]['pass'])) : ?>
-          <div class="card-body border-warning border-left">
-          <?php else : ?>
+        <div <?php if (!empty($waiting_list->videos[$i]['pass'])) : ?> class="border-warning border-left" <?php endif; ?>>
+
+          <div class="row justify-content-between">
+
             <div class="card-body">
-            <?php endif; ?>
-            <div>
-              <?php if (!empty($waiting_list->videos[$i]['pass'])) : ?>
-                <div class="alert alert-warning" role="alert">
-                  pass: <?= $waiting_list->videos[$i]['pass'] ?>
+              <div class="col">
+                <div>
+
+                  <?php if (!empty($waiting_list->videos[$i]['pass'])) : ?>
+                    <div class="alert alert-warning" role="alert">
+                      pass: <?= $waiting_list->videos[$i]['pass'] ?>
+                    </div>
+                  <?php endif; ?>
+
+                  <a class="card-link" target="_blank" rel="noreferrer" href="<?= ($waiting_list->videos[$i]['url'] ?? '000') ?> ">
+                    <?= htmlspecialchars($waiting_list->videos[$i]["title"] ?? '000') ?>
+                  </a>
+
                 </div>
-              <?php endif; ?>
 
+                <a target="_blank" rel="noreferrer" href="<?= filter_var($waiting_list->videos[$i]["uploader-url"] ?? '000', FILTER_VALIDATE_URL) ?>">
+                  <small class="text-muted"><?= htmlspecialchars($waiting_list->videos[$i]["uploader"] ?? '000') ?> </small>
+                </a>
 
-              <a class="card-link" target="_blank" rel="noreferrer" href="<?= ($waiting_list->videos[$i]['url'] ?? '000') ?> ">
-                <?= ($waiting_list->videos[$i]["title"] ?? '000') ?></a>
-              <form action="?c=waiting&page=<?= $page ?>" method="post">
-                <button class="close" type="submit" name="delete" value="<?= $i + 1 ?>">
-                  <span>
-                    <svg alt="télécharger" role="presentation" class="bi bi-trash-fill text-danger" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd" d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z" />
-                    </svg>
-                  </span>
-                </button>
-                <button class="close" type="submit" name="download" value="<?= $i ?>">
-                  <span class="text-muted mr-2">
-                    <svg alt="supprimer" role="presentation" class="bi bi-download" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                      <path fill-rule="evenodd" d="M.5 8a.5.5 0 0 1 .5.5V12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8.5a.5.5 0 0 1 1 0V12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8.5A.5.5 0 0 1 .5 8z" />
-                      <path fill-rule="evenodd" d="M5 7.5a.5.5 0 0 1 .707 0L8 9.793 10.293 7.5a.5.5 0 1 1 .707.707l-2.646 2.647a.5.5 0 0 1-.708 0L5 8.207A.5.5 0 0 1 5 7.5z" />
-                      <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0v-8A.5.5 0 0 1 8 1z" />
-                    </svg>
-                  </span>
-                </button>
-              </form>
+              </div>
             </div>
 
-            <a target="_blank" rel="noreferrer" href="<?= ($waiting_list->videos[$i]["uploader-url"] ?? '000') ?>">
-              <small class="text-muted"><?= ($waiting_list->videos[$i]["uploader"] ?? '000') ?> </small>
-            </a>
+            <?php if (null !== $waiting_list->videos[$i]["thumbnail"]) : ?>
+              <div class="col-auto">
+                <img src="<?= filter_var($waiting_list->videos[$i]["thumbnail"], FILTER_VALIDATE_URL) ?>" referrerpolicy="no-referrer" class="card-img" loading="lazy" alt="thumbnail" height="90">
+              </div>
+            <?php endif; ?>
 
-
-            </div>
           </div>
-        <?php } ?>
-      </div>
 
+        </div>
+
+        <div class="card-footer">
+          <form action="?c=waiting&page=<?= $page ?>" method="post">
+            <small class="text-muted"><?= date("Y-m-d H:i:s", $waiting_list->videos[$i]["get_date"]) ?></small>
+            <button class="close" type="submit" name="delete" value="<?= $i + 1 ?>">
+              <span>
+                <svg alt="télécharger" role="presentation" class="bi bi-trash-fill text-danger" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z" />
+                </svg>
+              </span>
+            </button>
+            <button class="close" type="submit" name="download" value="<?= $i ?>">
+              <span class="text-muted mr-2">
+                <svg alt="supprimer" role="presentation" class="bi bi-download" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M.5 8a.5.5 0 0 1 .5.5V12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8.5a.5.5 0 0 1 1 0V12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8.5A.5.5 0 0 1 .5 8z" />
+                  <path fill-rule="evenodd" d="M5 7.5a.5.5 0 0 1 .707 0L8 9.793 10.293 7.5a.5.5 0 1 1 .707.707l-2.646 2.647a.5.5 0 0 1-.708 0L5 8.207A.5.5 0 0 1 5 7.5z" />
+                  <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0v-8A.5.5 0 0 1 8 1z" />
+                </svg>
+              </span>
+            </button>
+          </form>
+        </div>
+
+      </div>
+    <?php endfor; ?>
   </div>
+
+</div>
 </div>
 
 

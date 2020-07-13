@@ -91,6 +91,16 @@ class Feedparser
             $entry['uploader-url'] = $value['siteUrl'] ?? $value['xmlUrl'];
             $entry['get_date'] = $item->get_date('U');
 
+            if ($enclosure = $item->get_enclosure()) {
+                if (null !== $enclosure->get_thumbnail()) {
+                    $entry['thumbnail'] = $enclosure->get_thumbnail();
+                }
+                if (null !== $enclosure->get_description()) {
+
+                    $entry['description'] = $enclosure->get_description();
+                }
+            }
+
             $get_id = $item->get_id();
             if (isset($saved_items[$id]['update'])) {
                 $entry['update'] = $saved_items[$get_id]['update'];
