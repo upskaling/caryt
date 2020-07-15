@@ -10,6 +10,7 @@ $config = array(
     // number of download attempts
     'errorspass' => 3,
     'feed' => "../data/feeds.json",
+    'category' => "../data/category.json",
     'cookiefile' => '../data/cookies.txt',
     'download-archive' =>  '../data/archive-WL.txt',
     'diff' => '../data/diff',

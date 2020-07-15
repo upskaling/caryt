@@ -58,6 +58,11 @@ switch ($GET_c) {
     require '../app/views/update.php';
     break;
 
+  case 'category':
+    require '../app/views/category.php';
+    break;
+
+
   case 'logout':
     header('WWW-Authenticate: Basic realm="Login"');
     header('HTTP/1.0 401 Unauthorized');

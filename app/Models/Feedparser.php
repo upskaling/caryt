@@ -86,6 +86,7 @@ class Feedparser
             $entry = [];
             $entry['url'] = $item->get_permalink();
             $entry['title'] = (string) $item->get_title();
+            $entry['category'] = $value['category'] ?? 0;
 
             $entry['uploader'] = $value['title'];
             $entry['uploader-url'] = $value['siteUrl'] ?? $value['xmlUrl'];
@@ -196,5 +197,16 @@ class Feedparser
     public function delete(string $id)
     {
         unset($this->feeds[$id]);
+    }
+
+    public function delete_category(string $id)
+    {
+        foreach ($this->feeds as &$value) {
+            if ($value['category'] == $id) {
+                error_log('category removal' . $value['category']);
+                $value['category'] = 0;
+            }
+        }
+        $this->write();
     }
 }

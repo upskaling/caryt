@@ -1,6 +1,9 @@
 <?php #UTF-8
 
+require_once __DIR__ . '/../Models/Category.php';
 require_once __DIR__ . '/../Models/Feedparser.php';
+
+$category = new category($config['category']);
 $feedparser = new Feedparser($config['feed']);
 
 (int) $Get_id = $_GET['id'] ?? '';
@@ -24,6 +27,8 @@ if ($xmlUrl) {
   $feedparser->feeds[$get_id]['siteUrl'] = filter_var($_POST['siteUrl'], FILTER_VALIDATE_URL);
   $feedparser->feeds[$get_id]['title'] = (string) $_POST['title'];
   $feedparser->feeds[$get_id]['update_interval'] = (int) $_POST['update_interval'];
+  $feedparser->feeds[$get_id]['category'] = (int) $_POST['category'];
+
   if (empty($_POST['mute'])) {
     unset($feedparser->feeds[$get_id]['mute']);
   } else {
@@ -116,6 +121,19 @@ if ($get_a == 'actualize') {
             <path fill-rule="evenodd" d="M10.5 5h-4a.5.5 0 0 0 0 1h2.793l-4.147 4.146a.5.5 0 0 0 .708.708L10 6.707V9.5a.5.5 0 0 0 1 0v-4a.5.5 0 0 0-.5-.5z" />
           </svg>
         </a>
+      </div>
+
+      <hr>
+
+      <div class="form-group row">
+        <label class="col-md-auto col-form-label" for="category">Catégorie</label>
+        <div>
+          <select class="form-control" name="category" id="category">
+            <?php foreach ($category->category as $key => $value) : ?>
+              <option value="<?= $key ?>" <?= ($id['category'] == $key) ? 'selected="selected"' : '' ?>><?= htmlspecialchars($value) ?></option>
+            <?php endforeach; ?>
+          </select>
+        </div>
       </div>
 
       <hr>
