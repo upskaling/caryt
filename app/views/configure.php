@@ -9,6 +9,7 @@ if (is_file('../data/config.php')) {
 $get_a = $_GET['a'] ?? '';
 if ($get_a == 'reading') {
 
+    $config['ttl_default'] = (int) $_POST['ttl_default'];
     $config['errorspass'] = (int) $_POST['errorspass'];
     $config['items_per_page'] = (int) $_POST['items_per_page'];
     $config['max_downloads'] = (int) $_POST['max_downloads'];
@@ -56,17 +57,40 @@ if ($get_a == 'profile') {
                     <input type="number" id="max_downloads" name="max_downloads" value="<?= $config['max_downloads'] ?>" min="0" max="500" data-leave-validation="5">
                 </div>
                 <div class="form-group">
-                    <label for="YOUTUBR_DL_WL_purge_days">nombre de jours après lesquels il faut supprimer</label>
+                    <label for="YOUTUBR_DL_WL_purge_days">nombre de jours après lesquels il faut supprimer les media</label>
                     <input type="number" id="YOUTUBR_DL_WL_purge_days" name="YOUTUBR_DL_WL_purge_days" value="<?= $config['YOUTUBR_DL_WL_purge_days'] ?>" min="0" data-leave-validation="6">
                 </div>
                 <div class="form-group">
                     <label for="url">URL de l'instance (important pour le flux RSS)</label>
                     <input type="url" id="url" name="url" value="<?= $config['url'] ?>">
                 </div>
-                <div class="text-center">
+
+                <div class="form-group row">
+                    <label class="col-md-auto col-form-label" for="ttl_default">Ne pas automatiquement rafraîchir plus souvent que</label>
+                    <div>
+                        <select class="form-control" name="ttl_default" id="ttl_default" required="required" data-leave-validation="<?= $config['ttl_default'] ?>">
+                            <?php foreach ([
+                                1200 => '20min', 1500 => '25min', 1800 => '30min', 2700 => '45min',
+                                3600 => '1h', 5400 => '1.5h', 7200 => '2h', 10800 => '3h', 14400 => '4h', 18800 => '5h', 21600 => '6h', 25200 => '7h', 28800 => '8h',
+                                36000 => '10h', 43200 => '12h', 64800 => '18h',
+                                86400 => '1d', 129600 => '1.5d', 172800 => '2d', 259200 => '3d', 345600 => '4d', 432000 => '5d', 518400 => '6d',
+                                604800 => '1wk'
+                            ] as $key => $value) : ?>
+                                <option value="<?= $key ?>" <?= ($config['ttl_default'] == $key ? 'selected' : '') ?>><?= $value ?></option>
+                            <?php endforeach; ?>
+                        </select>(Par défaut)
+                        <label for="mute">
+                            <input type="checkbox" name="mute" id="mute" value="1" <?= (empty($feed->mute)) ?: 'checked' ?>>
+                            muet
+                        </label>
+                    </div>
+                </div>
+
+                <div class=" text-center">
                     <button type="submit" class="btn btn-primary">Valider</button>
                     <button type="reset" class="btn btn-secondary">Annuler</button>
                 </div>
+
             </form>
         </div>
     </div>

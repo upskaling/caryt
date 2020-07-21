@@ -1,12 +1,11 @@
 <?php #UTF-8
 
-require_once  __DIR__ . '/../Models/Waiting_list.php';
-$waiting_list = new Waiting_list($config['waiting_list']);
+require_once  __DIR__ . '/../Models/Entry.php';
+$entry = new Entry($pdo);
 
 (string) $url = filter_var($_POST["url"] ?? '', FILTER_VALIDATE_URL);
 if (!empty($url)) {
-    $waiting_list->add_video($url);
-    $waiting_list->write();
+    $entry->add_video($url);
 }
 
 ?>

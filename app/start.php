@@ -10,7 +10,22 @@ if (is_file('../data/config.php')) {
   require '../config.default.php';
 }
 
+if (!is_file('../data/install')) {
+  require '../app/views/install.php';
+  die();
+}
+
 require '../app/views/login.php';
+
+$pdo = new PDO(
+  $config['db'],
+  null,
+  null,
+  [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+  ]
+);
 
 $GET_c = $_GET['c'] ?? '';
 switch ($GET_c) {
@@ -62,6 +77,9 @@ switch ($GET_c) {
     require '../app/views/category.php';
     break;
 
+  case 'entry':
+    require '../app/views/entry.php';
+    break;
 
   case 'logout':
     header('WWW-Authenticate: Basic realm="Login"');

@@ -6,13 +6,15 @@ $config = array(
         // admin => admin;
         'admin' => '$argon2i$v=19$m=65536,t=4,p=1$akpNY1Z3aFNGcUVISnNPLg$YTEVa70CUGh+w/N0dNj9yIBmNbWhfdJG8xjn9ScDMdM',
     ),
-    'waiting_list' => '../data/waiting_list.json',
+    'db' => 'sqlite:../data/data.db',
     // number of download attempts
     'errorspass' => 3,
-    'feed' => "../data/feeds.json",
-    'category' => "../data/category.json",
+
+    'ttl_default' => 43200,
+    // youtube-dl
     'cookiefile' => '../data/cookies.txt',
     'download-archive' =>  '../data/archive-WL.txt',
+
     'diff' => '../data/diff',
     // nombre max de téléchargement 
     'max_downloads' => 5,

@@ -2,94 +2,119 @@
 
 class Feedparser
 {
-    public function __construct(string $feed_file)
+    public function __construct($pdo)
     {
-        $this->feed_file = $feed_file;
-        $this->read();
-    }
-
-    public function read()
-    {
-        $this->feeds = json_decode(
-            file_get_contents($this->feed_file),
-            true
-        )['outline'];
+        $this->pdo = $pdo;
     }
 
     public function write()
     {
         if (!empty($this->videos)) {
-            require_once 'Waiting_list.php';
-            $waiting_list = new Waiting_list();
-            $waiting_list->add_video_list($this->videos);
-            $waiting_list->write();
+            require_once 'Entry.php';
+            $entry = new Entry($this->pdo);
+            $entry->add_video_list($this->videos);
         }
-        $this->remove_duplicates();
-        file_put_contents(
-            $this->feed_file,
-            json_encode(
-                ['outline' => $this->feeds],
-                JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
-            )
-        );
     }
 
-    public function remove_duplicates()
+    private function ttl_conter(int $update_interval_id = 0, int $ttl_default = 43200)
     {
-        $url = [];
-        $result = [];
-        foreach ($this->feeds as $value) {
-            if (!in_array($value['xmlUrl'], $url)) {
-                $url[] = $value['xmlUrl'];
-                $result[] = $value;
-            }
+
+        $ttl_list = [
+            1200, 1500, 1800, 2700,
+            3600, 5400, 7200, 10800, 14400, 18800, 21600, 25200, 28800,
+            36000, 43200, 64800,
+            86400, 129600, 172800, 259200, 345600, 432000, 518400,
+            604800
+        ];
+
+        if ($update_interval_id ?? 0 > 0) {
+            return $ttl_list[$update_interval_id - 1];
+        } else {
+            return $ttl_default;
         }
-        usort($result, function ($a, $b) {
-            return $a['title'] <=> $b['title'];
-        });
-        $this->feeds = $result;
     }
 
-    public function refresh_a_stream(int $id)
+    public function refresh_a_stream(int $id, $ttl_default)
     {
-        $value = &$this->feeds[$id];
-        error_log("[feedparser]: " . $value['xmlUrl']);
+        $query = $this->pdo->prepare('SELECT * FROM "admin_feed"
+        WHERE "rowid" = :id');
+        $query->execute([
+            'id' => $id
+        ]);
+
+        $value = $query->fetch();
+        error_log("[feedparser]: " . $value->xmlurl);
         require_once '../lib/SimplePie/autoloader.php';
         $feed = new SimplePie();
-        $feed->set_feed_url($value['xmlUrl']);
+        $feed->set_feed_url($value->xmlurl);
         $feed->set_useragent('Mozilla/5.0 (Windows NT 10.0; rv:68.0) Gecko/20100101 Firefox/68.0');
-        $feed->set_cache_duration($value['update_interval']);
+        $feed->set_cache_duration($this->ttl_conter($value->update_interval, $ttl_default));
         $feed->enable_cache();
         $feed->set_cache_location('../data/SimplePie/');
         $feed->init();
 
+        $query = $this->pdo->prepare('UPDATE "admin_feed" SET "update" = :update
+        WHERE "rowid" = :id');
+        $query->execute([
+            'update' => time(),
+            'id' => $id
+        ]);
 
+        $query = $this->pdo->prepare('UPDATE "admin_feed" SET "status" = :log
+        WHERE "rowid" = :id');
         if ($feed->error()) {
             error_log($feed->error());
-            $value['status'] = $feed->error();
+            $query->execute([
+                'log' => $feed->error(),
+                'id' => $id
+            ]);
             return;
         } else {
-            unset($value['status']);
+            $query->execute([
+                'log' => null,
+                'id' => $id
+            ]);
         }
 
         $feed->handle_content_type();
 
-        $cache = '../data/feeds/' . md5($value['xmlUrl']) . '.json';
+        $items = $feed->get_items();
 
-        if (is_file($cache)) {
-            $saved_items = json_decode(file_get_contents($cache), true);
+        $query = $this->pdo->prepare('UPDATE "admin_feed" SET "status" = :log
+        WHERE "rowid" = :id');
+        if (empty($items)) {
+            $query->execute([
+                'log' => 'Chaîne sans contenu',
+                'id' => $id
+            ]);
+            return;
+        } else {
+            $query->execute([
+                'log' => null,
+                'id' => $id
+            ]);
         }
 
-        unset($saved_items_new);
-        $entity_counter = 0;
-        foreach ($feed->get_items() as $item) {
+        $query = $this->pdo->prepare('SELECT "update", "rowid"
+        FROM "admin_entry"
+        WHERE "url" = :url');
+
+        $entity_counter_add = 0;
+        foreach ($items as $item) {
+            $query->execute([
+                'url' => $item->get_permalink()
+            ]);
+            $saved_items = $query->fetch();
+
+            if (!empty($saved_items)) {
+                continue;
+            }
+
             $entry = [];
             $entry['url'] = $item->get_permalink();
-            $entry['title'] = (string) $item->get_title();
-            $entry['category'] = $value['category'] ?? 0;
+            $entry['title'] = $item->get_title();
 
-            $entry['uploader'] = $value['title'];
-            $entry['uploader-url'] = $value['siteUrl'] ?? $value['xmlUrl'];
+            $entry['uploader-url'] = $value->xmlurl;
             $entry['get_date'] = $item->get_date('U');
 
             if ($enclosure = $item->get_enclosure()) {
@@ -102,51 +127,36 @@ class Feedparser
                 }
             }
 
-            $get_id = $item->get_id();
-            if (isset($saved_items[$id]['update'])) {
-                $entry['update'] = $saved_items[$get_id]['update'];
+            if (isset($saved_items->update)) {
+                $entry['update'] = $saved_items->update;
             } else {
-                $entry['update'] = date('Y-m-d H:i:s', time());
+                $entry['update'] = time();
             }
 
-            $saved_items_new[$get_id] = $entry;
-            if (isset($saved_items[$get_id])) {
-                continue;
-            }
-            $entity_counter += 1;
+            $entity_counter_add += 1;
             $this->videos[] = $entry;
         }
 
-
-        if (isset($saved_items_new)) {
-            file_put_contents(
-                $cache,
-                json_encode(
-                    $saved_items_new,
-                    JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES
-                )
-            );
-            unset($value['status']);
-        } else {
-            $value['status'] = 'Chaîne sans contenu';
-        }
-        $value['update'] = date('Y-m-d H:i:s', time());
-
-        if ($entity_counter > 0) {
-            error_log("[feedparser]:  => add $entity_counter", 0);
+        if ($entity_counter_add > 0) {
+            error_log("[feedparser]:  => add $entity_counter_add", 0);
         }
     }
 
-    public function track_flows(int $max_feed)
+    public function track_flows(int $max_feed, int $ttl_default)
     {
         require_once '../lib/SimplePie/autoloader.php';
 
+        $query = $this->pdo->prepare('SELECT "update", "update_interval", "rowid"
+        FROM "admin_feed"');
+        $query->execute();
+
         $max_f = 0;
-        foreach ($this->feeds as $id => $value) {
+        while ($value = $query->fetch()) {
+
             if (
-                strtotime($value['update']) >
-                strtotime('-' . $value['update_interval'] . ' seconds') ||
-                !empty($value['mute'])
+                $value->update >
+                strtotime('-' . $this->ttl_conter($value->update_interval, $ttl_default) . ' seconds') ||
+                !empty($value->mute)
             ) {
                 continue;
             }
@@ -155,20 +165,13 @@ class Feedparser
             if ($max_f > $max_feed) {
                 break;
             }
-            $this->refresh_a_stream($id);
+            $this->refresh_a_stream($value->rowid, $ttl_default);
         }
         $this->write();
     }
 
-    public function add_feeds(string $xmlUrl, &$resulta, &$i)
+    public function add_feeds(string $xmlUrl, &$resulta)
     {
-        foreach ($this->feeds as $i => $value) {
-            if ($value['xmlUrl'] == $xmlUrl) {
-                $resulta = 'déjà abonné';
-                break;
-            }
-        }
-
         if (empty($resulta)) {
             require_once '../lib/SimplePie/autoloader.php';
             $feed = new SimplePie();
@@ -181,32 +184,51 @@ class Feedparser
             if ($feed->error()) {
                 $resulta = $feed->error();
             } else {
-
-                $this->feeds[] = [
-                    'xmlUrl' => $xmlUrl,
+                $query = $this->pdo->prepare('INSERT INTO "admin_feed" ("xmlurl", "siteurl", "title", "update_interval", "update", "category")
+                VALUES (:xmlurl, :siteurl, :title, :update_interval, :update, :category);');
+                $query->execute([
+                    'xmlurl' => filter_var($xmlUrl, FILTER_VALIDATE_URL),
+                    'siteurl' => $feed->get_permalink(),
                     'title' => $feed->get_title(),
-                    'siteUrl' => $feed->get_permalink(),
-                    'update_interval' => 43200,
-                    'update' => date('Y-m-d H:i:s')
-                ];
+                    'update_interval' => 0,
+                    'update' => time(),
+                    'category' => 0
+                ]);
                 $resulta = 0;
             }
         }
     }
 
-    public function delete(string $id)
+    public function delete($id)
     {
-        unset($this->feeds[$id]);
+        $query = $this->pdo->prepare('DELETE FROM "admin_feed"
+        WHERE "rowid" = :id');
+        $query->execute([
+            'id' => $id
+        ]);
     }
 
-    public function delete_category(string $id)
+
+    public function change_category($id, $dest = 0)
     {
-        foreach ($this->feeds as &$value) {
-            if ($value['category'] == $id) {
-                error_log('category removal' . $value['category']);
-                $value['category'] = 0;
-            }
-        }
-        $this->write();
+        $query = $this->pdo->prepare('UPDATE "admin_feed" SET category = :dest
+        WHERE category = :id');
+        $query->execute([
+            'id' => $id,
+            'dest' => $dest
+        ]);
+    }
+
+
+    public function get_info_feed(string $uploader_url)
+    {
+        $query = $this->pdo->prepare('SELECT *, "rowid"
+        FROM "admin_feed"
+        WHERE "xmlurl" = :uploader_url
+        LIMIT 1');
+        $query->execute([
+            'uploader_url' => $uploader_url
+        ]);
+        return $query->fetch();
     }
 }

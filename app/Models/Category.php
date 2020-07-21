@@ -2,47 +2,41 @@
 class category
 {
 
-    public function __construct(string $category_file = '../../data/category.json')
+    public function __construct($pdo)
     {
-        $this->category_file = $category_file;
-        $this->read();
+        $this->pdo = $pdo;
     }
 
-    public function read()
+    public function update($title, $id)
     {
-
-        if (!is_file($this->category_file)) {
-            $this->category[] = 'Sans catégorie';
-            $this->write();
-        }
-
-        $this->category = json_decode(
-            file_get_contents($this->category_file),
-            true
-        );
-    }
-
-    public function write()
-    {
-        file_put_contents(
-            $this->category_file,
-            json_encode($this->category, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)
-        );
-    }
-
-    public function category_unique()
-    {
-        $this->category = array_unique($this->category);
+        $query = $this->pdo->prepare('UPDATE "admin_category" SET "name" = :name
+        WHERE "rowid" = :id
+        LIMIT :id');
+        $query->execute([
+            'name' => $title,
+            'id' => $id
+        ]);
     }
 
     public function add_category($new_category)
     {
-        array_push($this->category, $new_category);
-        $this->category_unique();
+        $query = $this->pdo->prepare('INSERT INTO "admin_category" ("name")
+        VALUES (:name)');
+        $query->execute([
+            'name' => $new_category
+        ]);
     }
 
-    public function delete(string $id)
+    public function delete($id)
     {
-        unset($this->category[$id]);
+        // require_once __DIR__ . '/../Models/Feedparser.php';
+        $feedparser = new Feedparser($this->pdo);
+        $feedparser->change_category($_GET['id']);
+
+        $query = $this->pdo->prepare('DELETE FROM "admin_category"
+        WHERE "rowid" = :id');
+        $query->execute([
+            'id' => $id
+        ]);
     }
 }

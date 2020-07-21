@@ -1,30 +1,32 @@
 <?php #UTF-8
 
-require_once  __DIR__ . '/../Models/Waiting_list.php';
-$waiting_list = new Waiting_list($config['waiting_list']);
+require_once  __DIR__ . '/../Models/Entry.php';
+require_once __DIR__ . '/../Models/Feedparser.php';
 
-$flux = [];
+$feedparser = new Feedparser($pdo);
+
+$flux = $pdo->query('SELECT "uploader_url", COUNT("uploader_url") AS "count_uploader"
+FROM "admin_entry"
+GROUP BY "uploader_url"
+ORDER BY COUNT("uploader_url") DESC
+LIMIT 10')->fetchAll();
+
 $jour = [];
-foreach ($waiting_list->videos as $value) {
-    $uploader = htmlspecialchars($value['uploader']);
-    if (in_array($uploader, $flux)) {
-        $flux[$uploader] = 1;
-    } else {
-        $flux[$uploader] += 1;
-    }
+foreach ($pdo->query('SELECT "update", "rowid" FROM "admin_entry"')->fetchAll() as $key => $value) {
 
-    $update = date('Y-m-d', strtotime($value['update']));
-    if (in_array($update, $jour)) {
+    $update = date('Y-m-d', $value->update);
+    if (!isset($jour[$update])) {
         $jour[$update] = 1;
     } else {
         $jour[$update] += 1;
     }
 }
-
-arsort($flux);
 arsort($jour);
 
-$count_waiting_list = count($waiting_list->videos);
+$count_entry = $pdo->query('SELECT COUNT("url") AS "count_url"
+FROM "admin_entry"
+WHERE "is_read" IS NULL ORDER BY "update"
+LIMIT 1')->fetch()->count_url;
 $count_jour = count($jour);
 ?>
 
@@ -39,17 +41,38 @@ $count_jour = count($jour);
 
         <h2>info</h2>
         <p>dans la file d'attente</p>
-        <?= $count_waiting_list ?> vidéo</br>
+
+        <table class="table table-striped">
+            <caption>Répartition des articles</caption>
+            <tbody>
+                <tr>
+                    <td>total</td>
+                    <td><?= $pdo->query('SELECT COUNT("url") AS "count_url"
+                    FROM "admin_entry"
+                    LIMIT 1')->fetch()->count_url; ?></td>
+                </tr>
+                <tr>
+                    <td>non lus</td>
+                    <td><?= $count_entry; ?></td>
+                </tr>
+                <tr>
+                    <td>lus</td>
+                    <td><?= $pdo->query('SELECT COUNT("url") AS "count_url"
+                    FROM "admin_entry"
+                    WHERE "is_read" IS NOT NULL ORDER BY "update"
+                    LIMIT 1')->fetch()->count_url; ?></td>
+                </tr>
+            </tbody>
+        </table>
+
         <?= $count_jour ?> jour</br>
-        <?= $count_waiting_list / $count_jour ?> par jour</br>
+        <?= $count_entry / $count_jour ?> nombre de vidéos par jour</br>
 
     </div>
     <div class="card card-body">
-        <h2>Les dix plus gros flux</h2>
+        <h2>Les dix plus gros flux dans la file d'attente</h2>
         <table class="table table-striped">
-            <caption>
-                Les dix plus gros flux
-            </caption>
+            <caption> Les dix plus gros flux dans la file d'attente</caption>
             <thead>
                 <tr>
                     <td>uploader</td>
@@ -59,27 +82,21 @@ $count_jour = count($jour);
             <tbody>
 
                 <?php
-                $i = 0;
                 foreach ($flux as $key => $value) :
-                    $i += 1;
-                    if ($i > 10) {
-                        break;
-                    }
+                    $uploader_url = $feedparser->get_info_feed($value->uploader_url);
                 ?>
                     <tr>
-                        <td><?= $key ?></td>
-                        <td><?= $value ?></td>
+                        <td><?= htmlentities($uploader_url->title) ?></td>
+                        <td><?= $value->count_uploader ?></td>
                     </tr>
                 <?php endforeach; ?>
             </tbody>
-
-
         </table>
     </div>
     <div class="card card-body">
-        <h2>Nombre d’articles par jour</h2>
+        <h2>Nombre d’articles par jour dans la file d'attente</h2>
         <table class="table table-striped">
-            <caption>Nombre d’articles par jour</caption>
+            <caption>Nombre d’articles par jour dans la file d'attente</caption>
             <thead>
                 <tr>
                     <td>jour</td>

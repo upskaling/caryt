@@ -91,13 +91,23 @@ function main()
 
     removeDirectory($config['YOUTUBR_DL_WL'] . '/trash');
 
-    require_once 'Models/Feedparser.php';
-    $feedparser = new Feedparser($config['feed']);
-    $feedparser->track_flows($config['max_feed']);
+    $pdo = new PDO(
+        'sqlite:../data/data.db',
+        null,
+        null,
+        [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+        ]
+    );
 
-    require_once 'Models/Waiting_list.php';
-    $waiting_list = new Waiting_list($config['waiting_list']);
-    $waiting_list->download_from_list(
+    require_once 'Models/Feedparser.php';
+    $feedparser = new Feedparser($pdo);
+    $feedparser->track_flows($config['max_feed'], $config['ttl_default']);
+
+    require_once 'Models/Entry.php';
+    $entry = new Entry($pdo);
+    $entry->download_from_list(
         $config['max_downloads'],
         $config['errorspass'],
         $config['YOUTUBR_DL_WL'] . '/' . date("Y-m-d", time()) . '/%(id)s/%(id)s.%(ext)s',

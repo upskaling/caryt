@@ -1,18 +1,18 @@
 <?php #UTF-8
 
-require_once __DIR__ . '/../Models/Waiting_list.php';
-$waiting_list = new Waiting_list($config['waiting_list']);
+require_once __DIR__ . '/../Models/Entry.php';
+require_once __DIR__ . '/../Models/Feedparser.php';
 
-$delete = $_POST["delete"] ?? null;
-if (!empty($delete)) {
-  $waiting_list->delete($delete - 1);
-  $waiting_list->write();
+$entry = new Entry($pdo);
+$feedparser = new Feedparser($pdo);
+
+$status = null;
+if (!empty($_POST['delete'])) {
+  $entry->delete($_POST['delete']);
+  $status = htmlspecialchars($_POST['delete']) . ' a été supprimé avec succès';
 }
 
-$let_waiting = sizeof($waiting_list->videos);
-
 (int) $page = $_GET['page'] ?? 0;
-
 if ($page) {
   $page_start = $config['items_per_page'] * $page;
   $page_max = $page_start + $config['items_per_page'];
@@ -21,135 +21,143 @@ if ($page) {
   $page_max = $config['items_per_page'];
 }
 
-(int) $download = $_POST["download"] ?? null;
-if (!is_null($download)) {
-  $waiting_list->download(
-    $download,
+if (!empty($_POST['download'])) {
+  $entry->download(
+    $_POST['download'],
     $config['YOUTUBR_DL_WL'] . '/' . date("Y-m-d", time()) . '/%(id)s/%(id)s.%(ext)s',
     $config['cookiefile'],
     $config['download-archive']
   );
-  $waiting_list->write();
+  $status = htmlspecialchars($_POST['download']) . ' download';
 }
 
+$let_waiting = $entry->sizeof();
+
+
 ?>
-<?php $title = '(' . sizeof($waiting_list->videos) . ') Liste des vidéos en attente'; ?>
+
+<?php $title = '(' . $let_waiting . ') Liste des vidéos en attente'; ?>
 <?php ob_start(); ?>
 
 <?php include(__DIR__ . '/../template/header.php'); ?>
-<div>
 
-  <div class="container py-4">
+<div class="container py-4">
 
-    <?php if ($download) : ?>
-      <div class="alert alert-success" role="alert">
-        <?= htmlspecialchars($download) ?> download
-      </div>
-    <?php endif; ?>
-
-    <?php if ($delete) : ?>
-      <div class="alert alert-success" role="alert">
-        <?= htmlspecialchars($delete) ?> a été supprimé avec succès
-      </div>
-    <?php endif; ?>
-
-    <div class="pagination justify-content-center">
-      <a href="./?c=add_url" class="btn btn-light btn-nt btn-sm">Ajout d'une URL</a>
+  <?php if ($status) : ?>
+    <div class="alert alert-success" role="alert">
+      <?= $status ?>
     </div>
+  <?php endif; ?>
 
-    <nav aria-label="Page navigation example">
-      <ul class="pagination justify-content-center">
-        <?php if ($page >= 1) : ?>
-          <li class="page-item">
-            <a class="page-link" href="?c=waiting&page=<?= $page - 1 ?>">⬅️</a>
-          </li>
-        <?php endif; ?>
-        <li class="page-item">
-          <p class="page-link"><?= $page ?: '1' ?></p>
-        </li>
-        <li class="page-item">
-          <p class="page-link"><?= ceil($let_waiting / $config['items_per_page']) - 1 ?></p>
-        </li>
-        <?php if (!($page_start + $config['items_per_page'] > $let_waiting)) : ?>
-          <li class="page-item">
-            <a class="page-link" href="?c=waiting&page=<?= $page + 1 ?>">➡️</a>
-          </li>
-        <?php endif; ?>
-      </ul>
-    </nav>
-
-    <!-- link list -->
-    <?php for ($i = $page_start; $i < $page_max; $i++) :
-      if (empty($waiting_list->videos[$i])) {
-        continue;
-      } ?>
-      <div class="card mb-4 shadow-sm">
-        <div <?php if (!empty($waiting_list->videos[$i]['pass'])) : ?> class="border-warning border-left" <?php endif; ?>>
-
-          <div class="row justify-content-between">
-
-            <div class="card-body">
-              <div class="col">
-                <div>
-
-                  <?php if (!empty($waiting_list->videos[$i]['pass'])) : ?>
-                    <div class="alert alert-warning" role="alert">
-                      pass: <?= $waiting_list->videos[$i]['pass'] ?>
-                    </div>
-                  <?php endif; ?>
-
-                  <a class="card-link" target="_blank" rel="noreferrer" href="<?= ($waiting_list->videos[$i]['url'] ?? '000') ?> ">
-                    <?= htmlspecialchars($waiting_list->videos[$i]["title"] ?? '000') ?>
-                  </a>
-
-                </div>
-
-                <a target="_blank" rel="noreferrer" href="<?= filter_var($waiting_list->videos[$i]["uploader-url"] ?? '000', FILTER_VALIDATE_URL) ?>">
-                  <small class="text-muted"><?= htmlspecialchars($waiting_list->videos[$i]["uploader"] ?? '000') ?> </small>
-                </a>
-
-              </div>
-            </div>
-
-            <?php if (null !== $waiting_list->videos[$i]["thumbnail"]) : ?>
-              <div class="col-auto">
-                <img src="<?= filter_var($waiting_list->videos[$i]["thumbnail"], FILTER_VALIDATE_URL) ?>" referrerpolicy="no-referrer" class="card-img" loading="lazy" alt="thumbnail" height="90">
-              </div>
-            <?php endif; ?>
-
-          </div>
-
-        </div>
-
-        <div class="card-footer">
-          <form action="?c=waiting&page=<?= $page ?>" method="post">
-            <small class="text-muted"><?= date("Y-m-d H:i:s", $waiting_list->videos[$i]["get_date"]) ?></small>
-            <button class="close" type="submit" name="delete" value="<?= $i + 1 ?>">
-              <span>
-                <svg alt="télécharger" role="presentation" class="bi bi-trash-fill text-danger" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z" />
-                </svg>
-              </span>
-            </button>
-            <button class="close" type="submit" name="download" value="<?= $i ?>">
-              <span class="text-muted mr-2">
-                <svg alt="supprimer" role="presentation" class="bi bi-download" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                  <path fill-rule="evenodd" d="M.5 8a.5.5 0 0 1 .5.5V12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8.5a.5.5 0 0 1 1 0V12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8.5A.5.5 0 0 1 .5 8z" />
-                  <path fill-rule="evenodd" d="M5 7.5a.5.5 0 0 1 .707 0L8 9.793 10.293 7.5a.5.5 0 1 1 .707.707l-2.646 2.647a.5.5 0 0 1-.708 0L5 8.207A.5.5 0 0 1 5 7.5z" />
-                  <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0v-8A.5.5 0 0 1 8 1z" />
-                </svg>
-              </span>
-            </button>
-          </form>
-        </div>
-
-      </div>
-    <?php endfor; ?>
+  <div class="pagination justify-content-center">
+    <a href="./?c=add_url" class="btn btn-light btn-nt btn-sm">Ajout d'une URL</a>
   </div>
 
-</div>
-</div>
+  <nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center">
+      <?php if ($page >= 1) : ?>
+        <li class="page-item">
+          <a class="page-link" href="?c=waiting&page=<?= $page - 1 ?>">⬅️</a>
+        </li>
+      <?php endif; ?>
+      <li class="page-item">
+        <p class="page-link"><?= $page ?: '1' ?></p>
+      </li>
+      <li class="page-item">
+        <p class="page-link"><?= ceil($let_waiting / $config['items_per_page']) - 1 ?></p>
+      </li>
+      <?php if (!($page_start + $config['items_per_page'] > $let_waiting)) : ?>
+        <li class="page-item">
+          <a class="page-link" href="?c=waiting&page=<?= $page + 1 ?>">➡️</a>
+        </li>
+      <?php endif; ?>
+    </ul>
+  </nav>
 
+  <!-- link list -->
+  <?php foreach ($entry->pager($page_start, $page_max, $_GET['state'] ?? 2) as $key => $value) : ?>
+    <div class="card mb-4 shadow-sm">
+      <div <?php if (empty($value->is_read)) : ?> class="border-danger border-left" <?php endif; ?>>
+
+        <div class="row justify-content-between">
+
+          <div class="card-body">
+            <div class="col">
+              <div>
+
+                <?php if (empty($value->is_read)) : ?>
+                  <form action="./?c=entry&a=read" method="post">
+                    <button type="submit" class="btn btn-sm" name="id" value="<?= $value->rowid ?>">
+                      <svg class="text-danger" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-envelope" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383l-4.758 2.855L15 11.114v-5.73zm-.034 6.878L9.271 8.82 8 9.583 6.728 8.82l-5.694 3.44A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.739zM1 11.114l4.758-2.876L1 5.383v5.73z" />
+                      </svg>
+                    </button>
+                    <a class="card-link" target="_blank" rel="noreferrer" href="<?= ($value->url ?: '#') ?> ">
+                      <?= htmlspecialchars($value->title) ?: 'title' ?>
+                    </a>
+                  </form>
+                <?php else : ?>
+                  <form action="./?c=entry&a=read&is_read=1" method="post">
+                    <button type="submit" class="btn btn-sm" name="id" value="<?= $value->rowid ?>">
+                      <svg class="danger" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-envelope-open" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                        <path fill-rule="evenodd" d="M8.47 1.318a1 1 0 0 0-.94 0l-6 3.2A1 1 0 0 0 1 5.4v.818l5.724 3.465L8 8.917l1.276.766L15 6.218V5.4a1 1 0 0 0-.53-.882l-6-3.2zM15 7.388l-4.754 2.877L15 13.117v-5.73zm-.035 6.874L8 10.083l-6.965 4.18A1 1 0 0 0 2 15h12a1 1 0 0 0 .965-.738zM1 13.117l4.754-2.852L1 7.387v5.73zM7.059.435a2 2 0 0 1 1.882 0l6 3.2A2 2 0 0 1 16 5.4V14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5.4a2 2 0 0 1 1.059-1.765l6-3.2z" />
+                      </svg>
+                    </button>
+                    <a class="card-link" target="_blank" rel="noreferrer" href="<?= ($value->url ?: '#') ?> ">
+                      <?= htmlspecialchars($value->title) ?: 'title' ?>
+                    </a>
+                  </form>
+                <?php endif; ?>
+
+
+                <?php if (!empty($value->pass)) : ?>
+                  <div class="alert alert-warning" role="alert">
+                    pass: <?= $value->pass ?>
+                  </div>
+                <?php endif; ?>
+
+              </div>
+
+              <?php
+              if (isset($value->uploader_url)) :
+                $uploader_url = $feedparser->get_info_feed($value->uploader_url);
+              ?>
+                <a target="_blank" rel="noreferrer" href="<?= filter_var($value->uploader_url, FILTER_VALIDATE_URL) ?: '#' ?>">
+                  <small class="text-muted"><?= $uploader_url->title ? htmlspecialchars($uploader_url->title) : 'uploader' ?></small>
+                </a>
+              <?php endif; ?>
+
+            </div>
+          </div>
+
+          <?php if (!empty($value->thumbnail)) : ?>
+            <div class="col-auto">
+              <img src="<?= filter_var($value->thumbnail, FILTER_VALIDATE_URL) ?>" referrerpolicy="no-referrer" class="card-img" loading="lazy" alt="thumbnail" height="90">
+            </div>
+          <?php endif; ?>
+
+        </div>
+
+      </div>
+
+      <div class="card-footer">
+        <form action="?c=waiting&page=<?= $page ?>" method="post">
+          <small class="text-muted"><?= date("Y-m-d H:i:s", $value->get_date ?: $value->update) ?: 'off' ?></small>
+          <button class="close" type="submit" name="download" value="<?= $value->rowid ?>">
+            <span class="text-muted mr-2">
+              <svg alt="supprimer" role="presentation" class="bi bi-download" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path fill-rule="evenodd" d="M.5 8a.5.5 0 0 1 .5.5V12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8.5a.5.5 0 0 1 1 0V12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V8.5A.5.5 0 0 1 .5 8z" />
+                <path fill-rule="evenodd" d="M5 7.5a.5.5 0 0 1 .707 0L8 9.793 10.293 7.5a.5.5 0 1 1 .707.707l-2.646 2.647a.5.5 0 0 1-.708 0L5 8.207A.5.5 0 0 1 5 7.5z" />
+                <path fill-rule="evenodd" d="M8 1a.5.5 0 0 1 .5.5v8a.5.5 0 0 1-1 0v-8A.5.5 0 0 1 8 1z" />
+              </svg>
+            </span>
+          </button>
+        </form>
+      </div>
+
+    </div>
+  <?php endforeach; ?>
+</div>
 
 <?php include(__DIR__ . '/../template/footer.php'); ?>
 
