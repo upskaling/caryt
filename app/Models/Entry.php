@@ -116,17 +116,17 @@ class Entry
     LIMIT :id');
     if ($status > 0) {
 
-      if (empty($value['pass'])) {
+      if (empty($value->pass)) {
         $query->execute([
           'pass' => 0,
           'id' => $id
         ]);
+      } else {
+        $query->execute([
+          'pass' => $value->pass + 1,
+          'id' => $id
+        ]);
       }
-
-      $query->execute([
-        'pass' => $value['pass'] + 1,
-        'id' => $id
-      ]);
 
       throw new Exception('download error');
     } else {
