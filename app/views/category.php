@@ -24,12 +24,16 @@ try {
         header('Location: ?c=channels');
     }
 
-    $query =  $pdo->prepare('SELECT * FROM "admin_category"
+    $query =  $pdo->prepare('SELECT *
+    FROM "admin_category"
     WHERE "rowid" = :id');
+
     $query->execute([
         'id' => $_GET['id']
     ]);
+    
     $category = $query->fetch();
+
 } catch (PDOException $e) {
     $error = $e->getMessage();
 }
