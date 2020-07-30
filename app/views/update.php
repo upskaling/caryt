@@ -10,6 +10,10 @@ if ($a === 'apply') {
     $update = htmlspecialchars($youtube_dl->update());
 }
 
+if ($a === 'rss_update') {
+    include __DIR__ . '/../rss.php';
+}
+
 ?>
 <?php $title = 'update'; ?>
 <?php ob_start(); ?>
@@ -18,12 +22,7 @@ if ($a === 'apply') {
 
 <div class="container py-4">
 
-    <?php if (!empty($update)) : ?>
-        <pre>
-            <?= $update ?>
-        </pre>
-    <?php endif; ?>
-
+    <h2>YouTube-DL</h2>
     <?php if (!empty($version)) : ?>
         <div class="alert alert-success" role="alert">
             Votre version de YouTube-DL <?= $version ?>
@@ -34,9 +33,23 @@ if ($a === 'apply') {
         </div>
     <?php endif; ?>
 
+    <?php if (!empty($update)) : ?>
+        <pre>
+            <?= $update ?>
+        </pre>
+    <?php endif; ?>
+
     <a href="./?c=update&a=apply" class="btn btn-secondary">
-        Appliquer la mise à jour
+        Mise à jour
     </a>
+
+    <hr>
+
+    <h2>rss</h2>
+    <a href="./?c=update&a=rss_update" class="btn btn-secondary">
+        Mise à jour
+    </a>
+
 </div>
 
 
