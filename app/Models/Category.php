@@ -29,9 +29,9 @@ class category
 
     public function delete($id)
     {
-        // require_once __DIR__ . '/../Models/Feedparser.php';
+        require_once __DIR__ . '/../Models/Feedparser.php';
         $feedparser = new Feedparser($this->pdo);
-        $feedparser->change_category($_GET['id']);
+        $feedparser->change_category($_GET['id'], 0);
 
         $query = $this->pdo->prepare('DELETE FROM "admin_category"
         WHERE "rowid" = :id');

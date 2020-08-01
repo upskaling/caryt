@@ -35,6 +35,7 @@ if (!is_file('../data/install')) {
     }
 } else {
     header('Location: ./');
+    exit();
 }
 
 ?>

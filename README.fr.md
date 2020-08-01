@@ -39,6 +39,7 @@ AUTH_PW: `admin`
 - [SimplePie](https://www.simplepie.org/)
 - [bootstrap](https://github.com/twbs/bootstrap)
 - php
+- sqlite
 
 ## inspirer de
 

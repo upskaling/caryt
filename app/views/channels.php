@@ -55,7 +55,7 @@ $category_len = sizeof($category);
       </div>
     </form>
 
-    <?php if ($_GET['error'] > 0) : ?>
+    <?php if ($_GET['error'] ?? 0 > 0) : ?>
       <a href="./?c=channels">Montrer tous les flux</a>
     <?php else : ?>
       <a href="./?c=channels&error=1">Montrer seulement les flux en erreur</a>
@@ -80,14 +80,14 @@ $category_len = sizeof($category);
       </div>
     </div>
 
-    <?php foreach ($category as $category_key => $category_value) : ?>
+    <?php foreach ($category as $category_value) : ?>
       <div class="card mb-2">
         <div class="card-body">
           <ul class="list-group list-group-flush">
 
             <li class="list-group-item list-group-item-secondary">
 
-              <a href="./?c=category&id=<?= $category_key ?>">
+              <a href="./?c=category&id=<?= $category_value->category ?>">
                 <svg aria-hidden="true" class="bi bi-gear-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                   <path fill-rule="evenodd" d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 0 0-5.86 2.929 2.929 0 0 0 0 5.858z" />
                 </svg>
@@ -97,7 +97,7 @@ $category_len = sizeof($category);
 
             </li>
 
-            <?php foreach (FunctionFeedGet($pdo, $category_key, $_GET['error']) as $value) : ?>
+            <?php foreach (FunctionFeedGet($pdo, $category_value->category, $_GET['error'] ?? 0) as $value) : ?>
 
               <li class="list-group-item">
                 <?php if (!empty($value->status)) : ?>

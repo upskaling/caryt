@@ -26,6 +26,7 @@ try {
                 $success = $resulta;
             }
             header('Location: ?c=feed&id=' . $pdo->lastInsertId());
+            exit();
         }
     }
 
@@ -147,7 +148,7 @@ try {
                 <div>
                     <select class="form-control" name="category" id="category">
                         <?php foreach ($category as $key => $category_value) : ?>
-                            <option value="<?= $key ?>" <?= ($feed->category == $key) ? 'selected="selected"' : '' ?>><?= htmlspecialchars($category_value->name) ?></option>
+                            <option value="<?= $category_value->category ?>" <?= ($feed->category == $category_value->category) ? 'selected="selected"' : '' ?>><?= htmlspecialchars($category_value->name) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -187,7 +188,7 @@ try {
             <hr>
 
             <div class="text-center">
-                <?= $entry->count_entry($feed->xmlurl) ?> articles 
+                <?= $entry->count_entry($feed->xmlurl) ?> articles
                 <a class="btn btn-primary" href="./?c=feed&a=actualize&id=<?= $_GET['id'] ?: 0 ?>">
                     <svg aria-hidden="true" class="bi bi-arrow-repeat" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                         <path fill-rule="evenodd" d="M2.854 7.146a.5.5 0 0 0-.708 0l-2 2a.5.5 0 1 0 .708.708L2.5 8.207l1.646 1.647a.5.5 0 0 0 .708-.708l-2-2zm13-1a.5.5 0 0 0-.708 0L13.5 7.793l-1.646-1.647a.5.5 0 0 0-.708.708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0 0-.708z" />
