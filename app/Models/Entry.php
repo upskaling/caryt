@@ -111,12 +111,12 @@ class Entry
     error_log($stderr);
     error_log($stdout);
 
-    $query = $this->pdo->prepare('UPDATE "admin_entry" SET "pass" = :pass
-    WHERE "rowid" = :id 
-    LIMIT :id');
     if ($status > 0) {
+      $query = $this->pdo->prepare('UPDATE "admin_entry" SET "pass" = :pass
+      WHERE "rowid" = :id 
+      LIMIT :id');
 
-      if (empty($value->pass)) {
+      if ($value->pass === null) {
         $query->execute([
           'pass' => 0,
           'id' => $id
