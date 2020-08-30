@@ -42,8 +42,8 @@
                         <li class="navbar-nav p-2">
                             <a class="text-light" href="./?c=configure">configure</a>
                         </li>
+                    </ul>
                 </div>
-                </ul>
             </div>
         </div>
     </nav>
