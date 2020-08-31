@@ -81,6 +81,10 @@ switch ($GET_c) {
     require '../app/views/entry.php';
     break;
 
+  case 'importExport':
+    require '../app/views/importExport.php';
+    break;
+
   case 'logout':
     header('WWW-Authenticate: Basic realm="Login"');
     header('HTTP/1.0 401 Unauthorized');

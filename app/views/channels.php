@@ -50,14 +50,9 @@ $category_len = sizeof($category);
     <form action="?c=feed&a=add" method="post" class="form-inline justify-content-center my-2 my-lg-0">
       <input class="form-control" style="width: 75%" type="url" name="add_url" placeholder="Ajouter un flux RSS" aria-label="Ajouter un flux RSS" />
       <input class="btn btn-primary my-2 my-sm-0" type="submit" value="✚"></input>
+      <a class="btn btn-primary" href="./?c=importExport">import/export</a>
     </form>
   </div>
-
-  <?php if ($_GET['error'] ?? 0 > 0) : ?>
-    <a href="./?c=channels">Montrer tous les flux</a>
-  <?php else : ?>
-    <a href="./?c=channels&error=1">Montrer seulement les flux en erreur</a>
-  <?php endif; ?>
 
   <div class="card mb-4">
     <div class="card-header text-center h5">
@@ -77,6 +72,12 @@ $category_len = sizeof($category);
 
     </form>
   </div>
+
+  <?php if ($_GET['error'] ?? 0 > 0) : ?>
+    <a href="./?c=channels">Montrer tous les flux</a>
+  <?php else : ?>
+    <a href="./?c=channels&error=1">Montrer seulement les flux en erreur</a>
+  <?php endif; ?>
 
   <?php foreach ($category as $category_value) : ?>
     <div class="card mb-2">

@@ -231,4 +231,13 @@ class Feedparser
         ]);
         return $query->fetch();
     }
+
+    public function export()
+    {
+        $query = $this->pdo->query('SELECT admin_category.name, admin_feed.title, admin_feed.xmlurl, admin_feed.siteurl
+        FROM "admin_feed"
+        INNER JOIN "admin_category" ON admin_feed.category = admin_category.category
+        ORDER BY admin_feed.category');
+        return $query->fetchAll();
+    }
 }
