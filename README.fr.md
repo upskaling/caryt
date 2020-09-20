@@ -20,7 +20,7 @@ caryt n’est fourni avec aucune garantie.
 ### crontab
 
 ```
-0 */1 * * * php /path/to/caryt/app/actualize.php 2>&1
+0 */1 * * * cd /path/to/caryt/; php /path/to/caryt/app/actualize.php 2>&1
 ```
 
 ### nginx

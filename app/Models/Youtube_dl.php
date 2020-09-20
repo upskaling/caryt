@@ -21,9 +21,17 @@ class Youtube_dl
 
     public function install()
     {
-        $curl = curl_init('https://yt-dl.org/downloads/latest/youtube-dl');
-        $result = curl_exec($curl);
-        file_put_contents('../bin/youtube-dl', $result);
+        $youtube_dl = '../bin/youtube-dl';
+        touch($youtube_dl);
+        $fp = fopen($youtube_dl, "w+");
+        $ch = curl_init('https://yt-dl.org/downloads/latest/youtube-dl');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+        curl_exec($ch);
+        curl_close ($ch);
+        fclose($fp);
     }
 
     public function sehll($arguments, &$stderr = null, &$stdout = null, &$ret)

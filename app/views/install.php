@@ -3,12 +3,26 @@
 require_once __DIR__ . '/../Models/Youtube_dl.php';
 $youtube_dl = new Youtube_dl();
 
+$dir_data = $dir_bin = true;
+
 if (!is_file('../data/install')) {
+
+    if (!is_dir('../data')) {
+        if (mkdir('../data', 0774)) {
+            $dir_data = false;
+        }
+    }
+    if (!is_dir('../bin')) {
+        if (mkdir('../bin', 0774)) {
+            $dir_bin = false;
+        }
+    }
 
     $version_youtube_dl = $youtube_dl->version();
 
     if (empty($version_youtube_dl)) {
         $youtube_dl->install();
+        $version_youtube_dl = $youtube_dl->version();
     }
 
     if (!is_file('../data/data.db')) {
@@ -45,6 +59,18 @@ if (!is_file('../data/install')) {
 <?php include(__DIR__ . '/../template/header.php'); ?>
 
 <div class="container py-4">
+
+    <?php if (!$dir_bin) : ?>
+        <div class="alert alert-danger" role="alert">
+            Le répertoire n'existe pas ../bin
+        </div>
+    <?php endif; ?>
+
+    <?php if (!$dir_data) : ?>
+        <div class="alert alert-danger" role="alert">
+            Le répertoire n'existe pas ../data
+        </div>
+    <?php endif; ?>
 
     <?php if (!empty($version_youtube_dl)) : ?>
         <div class="alert alert-success" role="alert">
