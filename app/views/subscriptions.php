@@ -10,6 +10,7 @@ foreach (scandir($config['YOUTUBR_DL_WL']) as $fileDate) {
     $count_video += 1;
   }
 }
+$filename_a = isset($_GET['page']) ? $_GET['page'] : end($youtubr_dl_wl_dir);
 
 ?>
 
@@ -29,7 +30,7 @@ foreach (scandir($config['YOUTUBR_DL_WL']) as $fileDate) {
     ?>
       <div class="mb-2 text-center">
         <div class="card">
-          <a class="dropdown-item" href="?c=subscriptions&page=<?= $filename ?>#date-<?= $filename ?>"><?= $filename ?>
+          <a class="dropdown-item <?= ($filename === $filename_a) ? 'active' : '' ?>" href="?c=subscriptions&page=<?= $filename ?>#date-<?= $filename ?>"><?= $filename ?>
             <span class="badge badge-dark"><?= count(scandir($dir_video)) - 2 ?></span>
           </a>
         </div>
@@ -43,16 +44,6 @@ foreach (scandir($config['YOUTUBR_DL_WL']) as $fileDate) {
   ?>
 
   <div id="date-<?= $filename ?>">
-
-    <div class="d-flex justify-content-center bd-highlight mb-2 text-center">
-      <div class="card">
-        <a href="#<?= $filename ?>" class="p-2 bd-highlight dropdown-item">
-          <?= $filename ?>
-          <span class="badge badge-dark"><?= count(scandir($dir_video)) - 2 ?></span>
-        </a>
-      </div>
-    </div>
-
     <div class="row row-cols-1 row-cols-md-3">
 
       <?php
