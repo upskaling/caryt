@@ -43,12 +43,25 @@ class Entry
     return $query->fetchall();
   }
 
-  public function sizeof()
+  public function sizeof($state)
   {
-    return $this->pdo->query('SELECT COUNT(*) AS COUNT
-    FROM admin_entry 
-    WHERE "is_read" IS NULL
-    ')->fetch()->COUNT;
+    switch ($state) {
+      case 1:
+        return $this->pdo->query('SELECT COUNT(*) AS COUNT
+        FROM admin_entry
+        WHERE "is_read" IS NOT NULL ORDER BY "update"')
+          ->fetch()->COUNT;
+      case 2:
+        return $this->pdo->query('SELECT COUNT(*) AS COUNT
+        FROM admin_entry
+        WHERE "is_read" IS NULL ORDER BY "update"')
+          ->fetch()->COUNT;
+      default:
+        return $this->pdo->query('SELECT COUNT(*) AS COUNT
+        FROM admin_entry
+        WHERE "is_read" IS NULL')
+          ->fetch()->COUNT;
+    }
   }
 
   public function add_video_list(array $videos_list)

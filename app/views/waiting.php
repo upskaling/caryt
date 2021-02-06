@@ -31,8 +31,15 @@ if (!empty($_POST['download'])) {
   $status = htmlspecialchars($_POST['download']) . ' download';
 }
 
-$let_waiting = $entry->sizeof();
+$let_waiting = $entry->sizeof($_GET['state'] ?? 2);
 
+
+function addUrlParam($params = array())
+{
+  $p = array_merge($_GET, $params);
+  $qs = http_build_query($p);
+  return basename($_SERVER['PHP_SELF']) . '?' . $qs;
+}
 
 ?>
 
@@ -53,11 +60,24 @@ $let_waiting = $entry->sizeof();
     <a href="./?c=add_url" class="btn btn-light btn-nt btn-sm">Ajout d'une URL</a>
   </div>
 
-  <nav aria-label="Page navigation example">
+  <div class="pagination justify-content-center">
+    <a href="<?= addUrlParam(array('state' => 2)) ?>" class="btn btn-light btn-nt btn-sm <?= ($_GET['state'] ?? '2') !== '2' ?: 'active' ?>">
+      <svg class="text-danger" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-envelope" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1H2zm13 2.383l-4.758 2.855L15 11.114v-5.73zm-.034 6.878L9.271 8.82 8 9.583 6.728 8.82l-5.694 3.44A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.739zM1 11.114l4.758-2.876L1 5.383v5.73z" />
+      </svg>
+    </a>
+    <a href="<?= addUrlParam(array('state' => 1)) ?>" class="btn btn-light btn-nt btn-sm <?= $_GET['state'] !== '1' ?: 'active' ?>">
+      <svg class="danger" width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-envelope-open" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path fill-rule="evenodd" d="M8.47 1.318a1 1 0 0 0-.94 0l-6 3.2A1 1 0 0 0 1 5.4v.818l5.724 3.465L8 8.917l1.276.766L15 6.218V5.4a1 1 0 0 0-.53-.882l-6-3.2zM15 7.388l-4.754 2.877L15 13.117v-5.73zm-.035 6.874L8 10.083l-6.965 4.18A1 1 0 0 0 2 15h12a1 1 0 0 0 .965-.738zM1 13.117l4.754-2.852L1 7.387v5.73zM7.059.435a2 2 0 0 1 1.882 0l6 3.2A2 2 0 0 1 16 5.4V14a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V5.4a2 2 0 0 1 1.059-1.765l6-3.2z" />
+      </svg>
+    </a>
+  </div>
+
+  <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
       <?php if ($page >= 1) : ?>
         <li class="page-item">
-          <a class="page-link" href="?c=waiting&page=<?= $page - 1 ?>">⬅️</a>
+          <a class="page-link" href="<?= addUrlParam(array('page' => $page - 1)) ?>">⬅️</a>
         </li>
       <?php endif; ?>
       <li class="page-item">
@@ -68,7 +88,7 @@ $let_waiting = $entry->sizeof();
       </li>
       <?php if (!($page_start + $config['items_per_page'] > $let_waiting)) : ?>
         <li class="page-item">
-          <a class="page-link" href="?c=waiting&page=<?= $page + 1 ?>">➡️</a>
+          <a class="page-link" href="<?= addUrlParam(array('page' => $page + 1)) ?>">➡️</a>
         </li>
       <?php endif; ?>
     </ul>
