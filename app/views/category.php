@@ -1,7 +1,9 @@
 <?php
 require_once __DIR__ . '/../Models/Category.php';
+require_once __DIR__ . '/../Models/Feedparser.php';
 
 $category = new Category($pdo);
+$feedparser = new Feedparser($pdo);
 
 $error = null;
 $success = null;
@@ -63,11 +65,13 @@ try {
             <div class="form-group row">
                 <label class="col-md-auto col-form-label" for="title">Titre</label>
                 <div class="col-md">
-                    <input class="form-control" type="text" name="title" id="title" value="<?= htmlentities($category->name ?? '')  ?>" <?= ($category->category != 0) ? '' : 'readonly' ?>>
+                    <input class="form-control" type="text" name="title" id="title" value="<?= htmlentities($category->name ?? '')  ?>" <?= ($category->category != 0) ? '' : 'readonly' ?> >
                 </div>
             </div>
 
             <hr>
+
+            <?= $feedparser->get_count_id($category->category) ?> flus
 
             <div class="text-center">
                 <button type="submit" class="btn btn-primary">Appliquer les changements</button>

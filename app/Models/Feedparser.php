@@ -232,6 +232,18 @@ class Feedparser
         return $query->fetch();
     }
 
+    public function get_count_id($id)
+    {
+        $query = $this->pdo->prepare('SELECT COUNT(*) AS COUNT
+        FROM "admin_feed"
+        WHERE "category" = :id');
+        $query->execute([
+            'id' => $id
+        ]);
+        return $query->fetch()->COUNT;
+    }
+
+
     public function export()
     {
         $query = $this->pdo->query('SELECT admin_category.name, admin_feed.title, admin_feed.xmlurl, admin_feed.siteurl

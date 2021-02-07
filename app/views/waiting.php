@@ -140,7 +140,7 @@ function addUrlParam($params = array())
               if (isset($value->uploader_url)) :
                 $uploader_url = $feedparser->get_info_feed($value->uploader_url);
               ?>
-                <a target="_blank" rel="noreferrer" href="<?= filter_var($value->uploader_url, FILTER_VALIDATE_URL) ?: '#' ?>">
+                <a href="./?c=feed&id=<?= $uploader_url->rowid ?>">
                   <small class="text-muted"><?= $uploader_url->title ? htmlspecialchars($uploader_url->title) : 'uploader' ?></small>
                 </a>
               <?php endif; ?>
@@ -160,7 +160,19 @@ function addUrlParam($params = array())
 
       <div class="card-footer">
         <form action="?c=waiting&page=<?= $page ?>" method="post">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clock" viewBox="0 0 16 16">
+            <path d="M8 3.5a.5.5 0 0 0-1 0V9a.5.5 0 0 0 .252.434l3.5 2a.5.5 0 0 0 .496-.868L8 8.71V3.5z" />
+            <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0z" />
+          </svg>
           <small class="text-muted"><?= date("Y-m-d H:i:s", $value->get_date ?: $value->update) ?: 'off' ?></small>
+          <br>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-link-45deg" viewBox="0 0 16 16">
+            <path d="M4.715 6.542L3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.001 1.001 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z" />
+            <path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 0 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 0 0-4.243-4.243L6.586 4.672z" />
+          </svg>
+          <a class="card-link" target="_blank" rel="noreferrer" href="<?= ($value->url ?: '#') ?> ">
+            <small class="text-muted"><?= $value->url ?></small>
+          </a>
           <button class="close" type="submit" name="download" value="<?= $value->rowid ?>">
             <span class="text-muted mr-2">
               <svg alt="supprimer" role="presentation" class="bi bi-download" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
