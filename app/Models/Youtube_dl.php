@@ -30,7 +30,7 @@ class Youtube_dl
         curl_setopt($ch, CURLOPT_MAXREDIRS, 3);
         curl_setopt($ch, CURLOPT_FILE, $fp);
         curl_exec($ch);
-        curl_close ($ch);
+        curl_close($ch);
         fclose($fp);
     }
 
@@ -74,14 +74,15 @@ class Youtube_dl
         &$stderr = null,
         &$stdout = null,
         &$ret,
-        $output,
-        $cookiefile,
-        $download_archive,
+        string $output,
+        string $cookiefile,
+        string $download_archive,
+        string $quality,
         bool $mark_watched = true
     ) {
         $arguments = [
             '--add-metadata',
-            '--format "worstvideo[height>=?480][ext=webm]+bestaudio[ext=webm]/worst[height>=?480]/best"',
+            '--format "worstvideo[height>=?' . $quality . '][ext=webm]+bestaudio[ext=webm]/worst[height>=?' . $quality . ']/best"',
             '--match-filter "!is_live & duration < 7200"',
             '--merge-output-format "webm"',
             '--write-info-json',

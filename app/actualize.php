@@ -107,13 +107,7 @@ function main()
 
     require_once 'Models/Entry.php';
     $entry = new Entry($pdo);
-    $entry->download_from_list(
-        $config['max_downloads'],
-        $config['errorspass'],
-        $config['YOUTUBR_DL_WL'] . '/' . date("Y-m-d", time()) . '/%(id)s/%(id)s.%(ext)s',
-        $config['cookiefile'],
-        $config['download-archive']
-    );
+    $entry->download_from_list($config);
 
     if (diff_dir($config['YOUTUBR_DL_WL'], $config['diff'])) {
         include 'rss.php';

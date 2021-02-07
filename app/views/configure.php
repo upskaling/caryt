@@ -9,6 +9,7 @@ if (is_file('../data/config.php')) {
 $get_a = $_GET['a'] ?? '';
 if ($get_a == 'reading') {
 
+    $config['quality_default'] = (int) $_POST['quality_default'];
     $config['ttl_default'] = (int) $_POST['ttl_default'];
     $config['errorspass'] = (int) $_POST['errorspass'];
     $config['items_per_page'] = (int) $_POST['items_per_page'];
@@ -83,6 +84,21 @@ if ($get_a == 'profile') {
                             <input type="checkbox" name="mute" id="mute" value="1" <?= (empty($feed->mute)) ?: 'checked' ?>>
                             muet
                         </label>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label class="col-md-auto col-form-label" for="ttl_default">Qualité</label>
+                    <div>
+                        <select class="form-control" name="quality_default" id="quality_default" required="required" data-leave-validation="<?= $config['quality_default'] ?>">
+                            <?php foreach ([
+                                144 => '144p', 240 => '240p',
+                                360 => '360p', 480 => '480p',
+                                720 => '720p', 1080 => '1080p'
+                            ] as $key => $value) : ?>
+                                <option value="<?= $key ?>" <?= ($config['quality_default'] == $key ? 'selected' : '') ?>><?= $value ?></option>
+                            <?php endforeach; ?>
+                        </select>
                     </div>
                 </div>
 

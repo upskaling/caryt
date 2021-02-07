@@ -24,9 +24,7 @@ if ($page) {
 if (!empty($_POST['download'])) {
   $entry->download(
     $_POST['download'],
-    $config['YOUTUBR_DL_WL'] . '/' . date("Y-m-d", time()) . '/%(id)s/%(id)s.%(ext)s',
-    $config['cookiefile'],
-    $config['download-archive']
+    $config
   );
   $status = htmlspecialchars($_POST['download']) . ' download';
 }

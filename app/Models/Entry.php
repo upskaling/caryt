@@ -97,9 +97,7 @@ class Entry
 
   public function download(
     int $id,
-    $output,
-    $cookiefile,
-    $download_archive
+    array $config
   ) {
     require_once __DIR__ . '/../Models/Youtube_dl.php';
     $youtube_dl = new Youtube_dl();
@@ -116,9 +114,10 @@ class Entry
       $stderr,
       $stdout,
       $status,
-      $output,
-      $cookiefile,
-      $download_archive
+      $config['YOUTUBR_DL_WL'] . '/' . date("Y-m-d", time()) . '/%(id)s/%(id)s.%(ext)s',
+      $config['cookiefile'],
+      $config['download-archive'],
+      $config['quality_default']
     );
 
     error_log($stderr);
@@ -153,13 +152,8 @@ class Entry
     }
   }
 
-  public function download_from_list(
-    int $max_downloads = 1,
-    int $errorspass = 3,
-    string $output,
-    string $cookiefile,
-    string $download_archive
-  ) {
+  public function download_from_list(array $config)
+  {
 
     $query = $this->pdo->prepare('SELECT "is_read", "pass", "rowid"
     FROM "admin_entry"
@@ -169,21 +163,19 @@ class Entry
     $download = 0;
     while ($value = $query->fetch()) {
 
-      if ($download >= $max_downloads) {
+      if ($download >= $config['max_downloads']) {
         break;
       }
 
       if (empty($value->pass)) {
-      } elseif ($value->pass >= $errorspass) {
+      } elseif ($value->pass >= $config['errorspass']) {
         continue;
       }
 
       try {
         $this->download(
           $value->rowid,
-          $output,
-          $cookiefile,
-          $download_archive
+          $config
         );
         $download += 1;
       } catch (Exception $e) {
