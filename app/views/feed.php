@@ -74,6 +74,15 @@ try {
     $error = $e->getMessage();
 }
 
+$query =  $pdo->prepare('SELECT "categories", COUNT(*) AS "count"
+FROM "admin_entry"
+WHERE "categories" IS NOT NULL AND "uploader_url" LIKE :uploader_url
+GROUP BY "categories"
+ORDER BY "count" DESC
+LIMIT 1');
+$query->execute(['uploader_url' => $feed->xmlurl]);
+$categories = $query->fetchAll();
+
 ?>
 
 <?php $title = 'Modifier le feed'; ?>
@@ -151,6 +160,11 @@ try {
                             <option value="<?= $category_value->category ?>" <?= ($feed->category == $category_value->category) ? 'selected="selected"' : '' ?>><?= htmlspecialchars($category_value->name) ?></option>
                         <?php endforeach; ?>
                     </select>
+                </div>
+                <div class="col-md-auto col-form-label">
+                    <?php if (!empty($categories[0]->categories)) : ?>
+                        Recommandé: <?= $categories[0]->categories ?>
+                    <?php endif; ?>
                 </div>
             </div>
 

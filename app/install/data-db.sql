@@ -8,7 +8,6 @@ CREATE TABLE "admin_category" (
 
 CREATE UNIQUE INDEX "admin_category_name_category" ON "admin_category" ("name", "category");
 
-INSERT INTO "admin_category" ("name", "category") VALUES ('Sans catégorie',	0);
 
 CREATE TABLE "admin_entry" (
   "url" text NOT NULL,
@@ -16,6 +15,7 @@ CREATE TABLE "admin_entry" (
   "uploader_url" text NULL,
   "thumbnail" text NULL,
   "description" text NULL,
+  "categories" text NULL,
   "get_date" integer NULL,
   "update" integer NULL,
   "is_read" integer NULL,

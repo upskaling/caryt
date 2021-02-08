@@ -6,6 +6,16 @@ if (is_file('../data/config.php')) {
   require '../config.default.php';
 }
 
+$pdo = new PDO(
+  $config['db'],
+  null,
+  null,
+  [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_OBJ
+  ]
+);
+
 $dom = new DOMDocument('1.0', "UTF-8");
 $dom->formatOutput = true;
 $root = $dom->createElement('rss');
@@ -24,9 +34,7 @@ $channel->appendChild($dom->createElement('lastBuildDate', date(DATE_RSS)));
 
 $youtubr_dl_wl_dir = glob($config['YOUTUBR_DL_WL'] . '/*/');
 
-$filename = end($youtubr_dl_wl_dir);
-
-$dir_video = $filename;
+$dir_video = end($youtubr_dl_wl_dir);
 
 foreach (scandir($dir_video) as $name) {
   if (in_array($name, array('.', '..'))) {
@@ -34,7 +42,7 @@ foreach (scandir($dir_video) as $name) {
   }
   $jsonb = json_decode(file_get_contents($dir_video . '/' . $name . '/' . $name . '.info.json'), true);
 
-  $dir_date = pathinfo($filename, PATHINFO_BASENAME);
+  $dir_date = pathinfo($dir_video, PATHINFO_BASENAME);
   $extension_thumbnail = pathinfo($jsonb['thumbnail'], PATHINFO_EXTENSION);
 
   if (is_file($dir_video . $name . '/' . $name . '.' . $extension_thumbnail)) {
@@ -81,6 +89,17 @@ foreach (scandir($dir_video) as $name) {
     foreach ($jsonb['tags'] as $tag) {
       $item->appendChild($dom->createElement('category', htmlspecialchars($tag)));
     }
+  }
+
+  //
+  if (isset($jsonb['categories'][0])) {
+    $query = $pdo->prepare('UPDATE "admin_entry"
+    SET categories=:categories
+    WHERE "categories" IS NULL AND url=:url');
+    $query->execute([
+      'url' => $jsonb['webpage_url'],
+      'categories' => $jsonb['categories'][0]
+    ]);
   }
 }
 

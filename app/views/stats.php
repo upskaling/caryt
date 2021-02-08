@@ -28,6 +28,13 @@ FROM "admin_entry"
 WHERE "is_read" IS NULL ORDER BY "update"
 LIMIT 1')->fetch()->count_url;
 $count_jour = count($jour);
+
+$categories =  $pdo->query('SELECT "categories", COUNT(*) AS "count"
+FROM "admin_entry"
+WHERE "categories" IS NOT NULL
+GROUP BY "categories"
+ORDER BY "count" DESC
+LIMIT 10')->fetchAll();
 ?>
 
 
@@ -93,6 +100,7 @@ $count_jour = count($jour);
             </tbody>
         </table>
     </div>
+
     <div class="card card-body">
         <h2>Nombre d’articles par jour dans la file d'attente</h2>
         <table class="table table-striped">
@@ -118,6 +126,29 @@ $count_jour = count($jour);
                         <td><?= $value ?></td>
                     </tr>
                 <?php endforeach; ?>
+            </tbody>
+
+        </table>
+    </div>
+
+    <div class="card card-body">
+        <h2>Nombre d'articles dans les catégories</h2>
+        <table class="table table-striped">
+            <caption>Nombre d'articles dans les catégories</caption>
+            <thead>
+                <tr>
+                    <td>catégories</td>
+                    <td>articles</td>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($categories as $key => $value) : ?>
+                    <tr>
+                        <td><?= $value->categories ?></td>
+                        <td><?= $value->count ?></td>
+                    </tr>
+                <?php endforeach; ?>
+
             </tbody>
 
         </table>

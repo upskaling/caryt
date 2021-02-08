@@ -92,7 +92,7 @@ function main()
     removeDirectory($config['YOUTUBR_DL_WL'] . '/trash');
 
     $pdo = new PDO(
-        'sqlite:../data/data.db',
+        $config['db'],
         null,
         null,
         [
