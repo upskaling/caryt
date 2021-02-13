@@ -39,4 +39,36 @@ class category
             'id' => $id
         ]);
     }
+
+    public function get()
+    {
+        $query =  $this->pdo->prepare('SELECT *, "rowid" FROM "admin_category"');
+        $query->execute();
+        return $query;
+    }
+
+    public function GetCategory(Int $id = 0)
+    {
+        $query =  $this->pdo->prepare('SELECT *
+        FROM "admin_category"
+        WHERE "rowid" = :id');
+
+        $query->execute([
+            'id' => $id
+        ]);
+
+        return $query->fetch();
+    }
+
+    public function get_top(string $uploader_url)
+    {
+        $query = $this->pdo->prepare('SELECT "categories", COUNT(*) AS "count"
+        FROM "admin_entry"
+        WHERE "categories" IS NOT NULL AND "uploader_url" LIKE :uploader_url
+        GROUP BY "categories"
+        ORDER BY "count" DESC
+        LIMIT 1');
+        $query->execute(['uploader_url' => $uploader_url]);
+        return $query;
+    }
 }

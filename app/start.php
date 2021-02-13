@@ -11,11 +11,11 @@ if (is_file('../data/config.php')) {
 }
 
 if (!is_file('../data/install')) {
-  require '../app/views/install.php';
+  require '../app/controller/install.php';
   die();
 }
 
-require '../app/views/login.php';
+require '../app/controller/login.php';
 
 $pdo = new PDO(
   $config['db'],
@@ -30,35 +30,35 @@ $pdo = new PDO(
 $GET_c = $_GET['c'] ?? '';
 switch ($GET_c) {
   case 'subscriptions':
-    require '../app/views/subscriptions.php';
+    $path = 'subscriptions.php';
     break;
 
   case 'waiting':
-    require '../app/views/waiting.php';
+    $path = 'waiting.php';
     break;
 
   case 'channels':
-    require '../app/views/channels.php';
+    $path = 'channels.php';
     break;
 
   case 'configure':
-    require '../app/views/configure.php';
+    $path = 'configure.php';
     break;
 
   case 'feed':
-    require '../app/views/feed.php';
+    $path = 'feed.php';
     break;
 
   case 'add_url':
-    require '../app/views/add_url.php';
+    $path = 'add_url.php';
     break;
 
   case 'watch':
-    require '../app/views/watch.php';
+    $path = 'watch.php';
     break;
 
   case 'stats':
-    require '../app/views/stats.php';
+    $path = 'stats.php';
     break;
 
   case 'about':
@@ -66,23 +66,23 @@ switch ($GET_c) {
     break;
 
   case 'configure':
-    require '../app/views/configure.php';
+    $path = 'configure.php';
     break;
 
   case 'update':
-    require '../app/views/update.php';
+    $path = 'update.php';
     break;
 
   case 'category':
-    require '../app/views/category.php';
+    $path = 'category.php';
     break;
 
   case 'entry':
-    require '../app/views/entry.php';
+    $path = 'entry.php';
     break;
 
   case 'importExport':
-    require '../app/views/importExport.php';
+    $path = 'importExport.php';
     break;
 
   case 'logout':
@@ -91,7 +91,8 @@ switch ($GET_c) {
     break;
 
   default:
-    require '../app/views/subscriptions.php';
-    // header('Location: ?c=subscriptions');
+    $path = 'subscriptions.php';
     break;
 }
+
+require '../app/controller/' . $path;

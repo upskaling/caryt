@@ -1,15 +1,3 @@
-<?php #UTF-8
-
-require_once  __DIR__ . '/../Models/Entry.php';
-$entry = new Entry($pdo);
-
-(string) $url = filter_var($_POST["url"] ?? '', FILTER_VALIDATE_URL);
-if (!empty($url)) {
-    $entry->add_video($url);
-}
-
-?>
-
 <?php $title = 'Ajout d\'une URL'; ?>
 <?php ob_start(); ?>
 

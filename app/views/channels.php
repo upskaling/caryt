@@ -1,44 +1,3 @@
-<?php #UTF-8
-
-
-function FunctionFeedGet($pdo, $id, $error = 0)
-{
-  if ($error == 1) {
-    $query = $pdo->prepare('SELECT *, "rowid"
-    FROM "admin_feed"
-    WHERE "status" IS NOT NULL AND "category" = :id');
-  } else {
-    $query = $pdo->prepare('SELECT *, "rowid"
-    FROM "admin_feed"
-    WHERE "category" = :id');
-  }
-  $query->execute([
-    'id' => $id,
-  ]);
-  return $query->fetchAll();
-}
-
-$error = null;
-try {
-
-  $query =  $pdo->prepare('SELECT *, "rowid"
-  FROM "admin_feed"');
-  $query->execute();
-  $feed = $query->fetchAll();
-
-  $query =  $pdo->prepare('SELECT *, "rowid"
-  FROM "admin_category"');
-  $query->execute();
-  $category = $query->fetchAll();
-} catch (PDOException $e) {
-  $error = $e->getMessage();
-}
-
-$category_len = sizeof($category);
-
-?>
-
-
 <?php $title = '(' . sizeof($feed) . ') Liste des chaînes'; ?>
 <?php ob_start(); ?>
 
@@ -96,7 +55,7 @@ $category_len = sizeof($category);
 
         </li>
 
-        <?php foreach (FunctionFeedGet($pdo, $category_value->category, $_GET['error'] ?? 0) as $value) : ?>
+        <?php foreach ($feedparser->FunctionFeedGet($category_value->category, $_GET['error'] ?? 0) as $value) : ?>
 
           <li class="list-group-item">
             <?php if (!empty($value->status)) : ?>

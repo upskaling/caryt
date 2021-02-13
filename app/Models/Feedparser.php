@@ -34,15 +34,19 @@ class Feedparser
         }
     }
 
-    public function refresh_a_stream(int $id, $ttl_default)
+    public function get_id(int $id)
     {
         $query = $this->pdo->prepare('SELECT * FROM "admin_feed"
         WHERE "rowid" = :id');
         $query->execute([
             'id' => $id
         ]);
+        return $query;
+    }
 
-        $value = $query->fetch();
+    public function refresh_a_stream(int $id, $ttl_default)
+    {
+        $value = $this->get_id($id)->fetch();
         error_log("[feedparser]: " . $value->xmlurl);
         require_once '../lib/SimplePie/autoloader.php';
         $feed = new SimplePie();
@@ -199,7 +203,7 @@ class Feedparser
         }
     }
 
-    public function delete($id)
+    public function delete(int $id)
     {
         $query = $this->pdo->prepare('DELETE FROM "admin_feed"
         WHERE "rowid" = :id');
@@ -208,6 +212,28 @@ class Feedparser
         ]);
     }
 
+    public function update(
+        $xmlUrl,
+        $siteUrl,
+        $title,
+        $update_interval,
+        $category,
+        $mute,
+        $id
+    ) {
+        $query = $this->pdo->prepare('UPDATE "admin_feed" SET "xmlurl" = :xmlurl, "siteurl" = :siteurl, "title" = :title, "update_interval" = :update_interval, "category" = :category, "mute" = :mute
+        WHERE "rowid" = :id
+        LIMIT :id;');
+        $query->execute([
+            'xmlurl' => filter_var($xmlUrl, FILTER_VALIDATE_URL),
+            'siteurl' => filter_var($siteUrl, FILTER_VALIDATE_URL),
+            'title' => $title,
+            'update_interval' => $update_interval,
+            "category" => $category,
+            'mute' => $mute,
+            'id' => $id
+        ]);
+    }
 
     public function change_category($id, $dest = 0)
     {
@@ -250,6 +276,31 @@ class Feedparser
         FROM "admin_feed"
         INNER JOIN "admin_category" ON admin_feed.category = admin_category.category
         ORDER BY admin_feed.category');
+        return $query->fetchAll();
+    }
+
+    public function feed()
+    {
+        $query = $this->pdo->query('SELECT *, "rowid"
+        FROM "admin_feed"');
+        return $query->fetchAll();
+    }
+
+
+    public function FunctionFeedGet(int $id, int $error = 0)
+    {
+        if ($error == 1) {
+            $query = $this->pdo->prepare('SELECT *, "rowid"
+            FROM "admin_feed"
+            WHERE "status" IS NOT NULL AND "category" = :id');
+        } else {
+            $query = $this->pdo->prepare('SELECT *, "rowid"
+            FROM "admin_feed"
+            WHERE "category" = :id');
+        }
+        $query->execute([
+            'id' => $id,
+        ]);
         return $query->fetchAll();
     }
 }

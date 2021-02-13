@@ -1,49 +1,3 @@
-<?php
-require_once __DIR__ . '/../Models/Category.php';
-require_once __DIR__ . '/../Models/Feedparser.php';
-
-$category = new Category($pdo);
-$feedparser = new Feedparser($pdo);
-
-$error = null;
-$success = null;
-try {
-
-    if (isset($_POST['title'])) {
-        $category->update($_POST['title'], $_GET['id']);
-        $success = 'modification enregistrée avec succès';
-    }
-
-    if (isset($_POST['new-category'])) {
-        $category->add_category($_POST['new-category']);
-        $success = 'la nouvelle catégorie a été enregistrée avec succès';
-        // header('Location: ?c=category&id=' . $pdo->lastInsertId());
-        header('Location: ?c=channels');
-        exit();
-    }
-
-    if (isset($_POST['delete'])) {
-        $category->delete($_GET['id']);
-        header('Location: ?c=channels');
-        exit();
-    }
-
-    $query =  $pdo->prepare('SELECT *
-    FROM "admin_category"
-    WHERE "rowid" = :id');
-
-    $query->execute([
-        'id' => $_GET['id'] ?? 0
-    ]);
-
-    $category = $query->fetch();
-} catch (PDOException $e) {
-    $error = $e->getMessage();
-}
-
-?>
-
-
 <?php $title = 'modifier la catégorie'; ?>
 <?php ob_start(); ?>
 
@@ -65,7 +19,7 @@ try {
             <div class="form-group row">
                 <label class="col-md-auto col-form-label" for="title">Titre</label>
                 <div class="col-md">
-                    <input class="form-control" type="text" name="title" id="title" value="<?= htmlentities($category->name ?? '')  ?>" <?= ($category->category != 0) ? '' : 'readonly' ?> >
+                    <input class="form-control" type="text" name="title" id="title" value="<?= htmlentities($category->name ?? '')  ?>" <?= ($category->category != 0) ? '' : 'readonly' ?>>
                 </div>
             </div>
 

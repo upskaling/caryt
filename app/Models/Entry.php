@@ -206,4 +206,64 @@ class Entry
     $query->execute(["uploader_url" => $uploader_url]);
     return $query->fetch()->count_entry;
   }
+
+  public function update_is_read(Int $id, $is_read)
+  {
+    $query = $this->pdo->prepare('UPDATE "admin_entry" SET "is_read" = :is_read
+    WHERE "rowid" = :id');
+    $query->execute([
+      'id' => $id,
+      'is_read' => $is_read
+    ]);
+  }
+
+  public function flux()
+  {
+    return $this->pdo->query('SELECT "uploader_url", COUNT("uploader_url") AS "count_uploader"
+    FROM "admin_entry"
+    GROUP BY "uploader_url"
+    ORDER BY COUNT("uploader_url") DESC
+    LIMIT 10')->fetchAll();
+  }
+
+
+  public function count_entry_r()
+  {
+    return $this->pdo->query('SELECT COUNT("url") AS "count_url"
+    FROM "admin_entry"
+    WHERE "is_read" IS NULL ORDER BY "update"
+    LIMIT 1')->fetch();
+  }
+
+
+  public function get_categories()
+  {
+    return $this->pdo->query('SELECT "categories", COUNT(*) AS "count"
+    FROM "admin_entry"
+    WHERE "categories" IS NOT NULL
+    GROUP BY "categories"
+    ORDER BY "count" DESC
+    LIMIT 10')->fetchAll();
+  }
+
+  public function get_update()
+  {
+    return $this->pdo->query('SELECT "update", "rowid" 
+    FROM "admin_entry"')->fetchAll();
+  }
+
+  public function total_count_url()
+  {
+    return $this->pdo->query('SELECT COUNT("url") AS "count_url"
+    FROM "admin_entry"
+    LIMIT 1')->fetch()->count_url;
+  }
+
+  public function count_entry_lus()
+  {
+    return $this->pdo->query('SELECT COUNT("url") AS "count_url"
+    FROM "admin_entry"
+    WHERE "is_read" IS NOT NULL ORDER BY "update"
+    LIMIT 1')->fetch()->count_url;
+  }
 }
