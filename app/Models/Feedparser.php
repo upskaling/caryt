@@ -303,4 +303,57 @@ class Feedparser
         ]);
         return $query->fetchAll();
     }
+
+    public function count_update()
+    {
+        $query = $this->pdo->query(
+            'SELECT COUNT(*) AS COUNT
+            FROM admin_feed
+            WHERE "siteurl" = "" OR "siteurl" IS NULL'
+        );
+        return $query->fetch();
+    }
+
+    public function update_siteurl()
+    {
+        $query = $this->pdo->query(
+            'SELECT "xmlurl", "title", "rowid"
+            FROM "admin_feed"
+            WHERE "siteurl" = "" OR "siteurl" IS NULL'
+        )->fetchAll();
+
+        require_once('../lib/SimplePie/autoloader.php');
+
+        $list_flux = [];
+        foreach ($query as $key => $value) {
+            $xmlurl = [];
+            $xmlurl['id'] = $value->rowid;
+            $xmlurl['title'] = $value->title;
+            $xmlurl['xmlurl'] = $value->xmlurl;
+
+            $feed = new SimplePie();
+            $feed->set_feed_url($value->xmlurl);
+            $feed->set_cache_duration(43200);
+            $feed->enable_cache();
+            $feed->set_cache_location('../data/SimplePie/');
+            $feed->init();
+
+            if ($feed->error()) {
+                $xmlurl['results'] =  $feed->error();
+            } else {
+                $query = $this->pdo->prepare(
+                    'UPDATE "admin_feed"
+                    SET siteurl=:siteurl, title=:title
+                    WHERE xmlurl=:xmlurl'
+                );
+                $query->execute([
+                    'xmlurl' => filter_var($value->xmlurl, FILTER_VALIDATE_URL),
+                    'siteurl' => $feed->get_permalink(),
+                    'title' => $feed->get_title()
+                ]);
+            }
+            array_push($list_flux, $xmlurl);
+        }
+        return $list_flux;
+    }
 }
