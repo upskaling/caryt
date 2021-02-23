@@ -61,3 +61,8 @@ menu {
 .rss_logo {
   color: #fd7e14;
 }
+
+div.card-body.row div.col-auto {
+  padding-right: 0px;
+  padding-left: 0px;
+}
