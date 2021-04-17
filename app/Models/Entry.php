@@ -217,6 +217,16 @@ class Entry
     ]);
   }
 
+  public function update_is_pass(Int $id, Int $pass)
+  {
+    $query = $this->pdo->prepare('UPDATE "admin_entry" SET "pass" = :pass
+    WHERE "rowid" = :id');
+    $query->execute([
+      'id' => $id,
+      'pass' => $pass
+    ]);
+  }
+
   public function flux()
   {
     return $this->pdo->query('SELECT "uploader_url", COUNT("uploader_url") AS "count_uploader"

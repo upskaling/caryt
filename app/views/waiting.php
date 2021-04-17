@@ -82,9 +82,14 @@
 
 
             <?php if (!empty($value->pass)) : ?>
-              <div class="alert alert-warning" role="alert">
-                pass: <?= $value->pass ?>
-              </div>
+              <form action="./?c=entry&a=pass" method="post">
+                <div class="alert alert-warning" role="alert">
+                  pass: <?= $value->pass ?>
+                  <button type="submit" class="close" name="id" value="<?= $value->rowid ?>">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+              </form>
             <?php endif; ?>
 
             <?php
