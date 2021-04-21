@@ -112,6 +112,7 @@ function main()
     if (diff_dir($config['YOUTUBR_DL_WL'], $config['diff'])) {
         include 'rss.php';
     }
+    include 'rss_waiting.php';
 
     error_log('End.');
 }

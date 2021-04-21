@@ -103,7 +103,6 @@ foreach (scandir($dir_video) as $name) {
   }
 }
 
-
-
 $dom->save('../p/index.xml') or die('XML Create Error');
-error_log("[rss] ok");
+
+error_log("[rss] index: ok");
